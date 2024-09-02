@@ -1,0 +1,29 @@
+<mat-toolbar color="primary">
+    <span>
+        <a routerLink="">My Messages</a>
+    </span>
+    <span class="spacer"></span>
+    <ul>
+        <!-- <li *ngIf="userIsAuthenticated"> -->
+            <a mat-button routerLink="/create" routerLinkActive='active-link'>Buy</a>
+        <!-- </li> -->
+         <!-- <li *ngIf="userIsAuthenticated"> -->
+            <a mat-button routerLink="/create" routerLinkActive='active-link'>Rent</a>
+        <!-- </li> -->
+         <!-- <li *ngIf="userIsAuthenticated"> -->
+            <a mat-button routerLink="/create" routerLinkActive='active-link'>Add for Sell</a>
+        <!-- </li> -->
+         <!-- <li *ngIf="userIsAuthenticated"> -->
+            <a mat-button routerLink="/create" routerLinkActive='active-link'>Add for Rent</a>
+        <!-- </li> -->
+        <!-- <li *ngIf="!userIsAuthenticated"> -->
+            <a mat-button routerLink="/auth/login" routerLinkActive='active-link'>Login</a>
+        <!-- </li> -->
+        <!-- <li *ngIf="!userIsAuthenticated"> -->
+            <a mat-button routerLink="/auth/signup" routerLinkActive='active-link'>Signup</a>
+        <!-- </li> -->
+        <!-- <li *ngIf="userIsAuthenticated"> -->
+            <!-- <button mat-button (click)="onLogout()">Logout</button> -->
+        <!-- </li> -->
+    </ul>
+</mat-toolbar>

@@ -1,0 +1,57 @@
+
+<mat-card>
+    <!-- <mat-spinner *ngIf="isLoading"></mat-spinner> -->
+    <form [formGroup]="form" (submit)="onSaveProp()" *ngIf="!isLoading">
+
+        <mat-form-field>
+            <mat-select 
+            placeholder="Tip: "
+            matInput 
+            type="text" 
+            formControlName="tip">
+                <mat-option *ngFor="let tip of tipovi" [value]="tip.value">
+                    {{tip.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput type="number" formControlName="povrsina" placeholder="Povrsina">
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput type="number" formControlName="cenaKvadrata" placeholder="Cena kvadrata: ">
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-select 
+            placeholder="Struktura: "
+            formControlName="tip">
+                <mat-option *ngFor="let struktura of strukture" [value]="struktura.value">
+                    {{struktura.name}}
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput type="number" formControlName="sprat" placeholder="Sprat: ">
+        </mat-form-field>
+
+        <mat-form-field>
+            <input matInput type="number" formControlName="brojSpavacihSoba" placeholder="Broj spavaćih soba: ">
+        </mat-form-field>
+
+        <mat-form-field>
+            <textarea 
+            matInput 
+            rows="4" 
+            formControlName="opis"
+            placeholder="Opis: "></textarea>
+        </mat-form-field>
+
+        <button 
+            mat-raised-button 
+            color="accent"
+            type="submit">Sačuvaj</button>
+    </form>
+</mat-card>
