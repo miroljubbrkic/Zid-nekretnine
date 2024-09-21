@@ -1,22 +1,33 @@
 
-
-<mat-accordion multi="true" *ngIf="sellProps.length > 0">
+<mat-progress-bar *ngIf="isLoading" mode="indeterminate" value="40" color="warn"></mat-progress-bar>
+<mat-accordion multi="true" *ngIf="sellProps.length > 0 && !isLoading">
     <mat-expansion-panel *ngFor="let prop of sellProps">
         <mat-expansion-panel-header>
-            Prodaja: {{ prop.tip}} - {{prop.povrsina*prop.cenaKvadrata}}
+            Prodaja: {{ getTip(prop.tip) }} - {{(prop.povrsina*prop.cenaKvadrata) | currency:'EUR'}} 
         </mat-expansion-panel-header>
         <p>Povrsina: {{ prop.povrsina }}</p>
-        <p>Struktura: {{ prop.struktura }}</p>
+        <p>Struktura: {{ getStruktura(prop.struktura) }}</p>
         <p>Sprat: {{ prop.sprat }}</p>
         <p>Broj spavacih soba: {{ prop.brojSpavacihSoba }}</p>
+        <p>Opis: {{ prop.opis }}</p>
+
+        <!-- <div class="prop-image" *ngFor="let slika of prop.slike">
+            <img [src]="slika" alt="">
+        </div> -->
+        <div *ngIf="prop.slike && prop.slike.length > 0" class="images-container">
+            <div *ngFor="let img of prop.slike" class="image-item">
+                <img [src]="img" alt="Property Image" class="property-image" />
+            </div>
+        </div>
+
         <mat-action-row>
 
-            <button mat-fab extended color="primary">
+            <a mat-fab extended color="primary" [routerLink]="['/sell-prop-edit', prop._id]">
                 <mat-icon>edit</mat-icon>
                 Edit
-            </button>
+            </a>
 
-            <button mat-fab extended color="warn">
+            <button mat-fab extended color="warn" (click)="onDelete(prop._id)">
                 <mat-icon>delete</mat-icon>
                 Delete
             </button>
@@ -24,4 +35,4 @@
         </mat-action-row>
     </mat-expansion-panel>
 </mat-accordion>
-<p class="info-text mat-body-1" *ngIf="sellProps.length <= 0">No properties added yet!</p>
+<p class="info-text mat-body-1" *ngIf="sellProps.length <= 0 && !isLoading">No properties added yet!</p>

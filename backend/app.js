@@ -1,9 +1,23 @@
+const path = require('path')
 const express = require('express')
 const bodyParser = require('body-parser')
+const mongoose = require('mongoose')
+
+const SellProp = require('./models/sellProp')
+const sellPropsRoutes = require('./routes/sellProps')
 
 const app = express()
 
+mongoose.connect('mongodb+srv://root:root@cluster0.zglfne3.mongodb.net/zidd?retryWrites=true&w=majority&appName=Cluster0').then(() => {
+    console.log('Connected to database');
+}).catch(() => {
+    console.log('Connection failed!');
+})
+
 app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
+
+app.use('/images', express.static(path.join('backend/images')))
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*")
@@ -18,51 +32,11 @@ app.use((req, res, next) => {
     next()
 })
 
-app.get('/zid/sell-props', (req, res, next) => {
 
-    const sellProps = [
-        {
-            _id:'111', 
-            tip: 'stan', 
-            povrsina:45, 
-            cenaKvadrata: 2000, 
-            struktura: 'dvosoban', 
-            sprat: 2, 
-            brojSpavacihSoba: 2
-        },
-        {
-            _id:'222', 
-            tip: 'stan', 
-            povrsina:90, 
-            cenaKvadrata: 1800, 
-            struktura: 'cetvorosoban', 
-            sprat: 4, 
-            brojSpavacihSoba: 4
-        },
-        {
-            _id:'333', 
-            tip: 'stan', 
-            povrsina:30, 
-            cenaKvadrata: 2500, 
-            struktura: 'garsonjera', 
-            sprat: 1, 
-            brojSpavacihSoba: 1
-        }
-    ]
 
-    res.status(200).json({
-        message: 'Properties for selling fetched successfully!',
-        sellPorps: sellProps
-    })
-})
 
-app.post('/zid/sell-props', (req, res, next) => {
-    const sellProp = req.body
-    console.log(sellProp);
-    res.status(201).json({
-        message: 'Property for selling added successfully!'
-    })
-})
-
+// app.use(sellPropsRoutes)
+app.use('/zid/sell-props', sellPropsRoutes)
+// app.use('/zid', sellPropsRoutes);
 
 module.exports = app

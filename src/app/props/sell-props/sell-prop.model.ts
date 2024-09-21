@@ -1,11 +1,12 @@
 
 export interface SellProp {
-    _id: string | null
+    _id: string
     tip: string
     povrsina: number
     cenaKvadrata: number
     struktura: string
     sprat: number
-    brojSpavacihSoba: number
+    brojSpavacihSoba: number,
+    slike: string[],
     opis: string
 }

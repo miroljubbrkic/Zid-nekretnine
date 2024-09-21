@@ -7,10 +7,12 @@ import {MatButtonModule} from '@angular/material/button';
 import {MatToolbarModule} from '@angular/material/toolbar';
 import {MatExpansionModule} from '@angular/material/expansion';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatDialogModule} from '@angular/material/dialog';
-import { MatSelectModule } from "@angular/material/select";
+import {MatSelectModule} from "@angular/material/select";
 import {MatIconModule} from '@angular/material/icon';
+import { MatGridListModule } from '@angular/material/grid-list';
 
 
 
@@ -24,10 +26,12 @@ import {MatIconModule} from '@angular/material/icon';
     MatToolbarModule,
     MatExpansionModule,
     MatProgressSpinnerModule,
+    MatProgressBarModule,
     MatPaginatorModule,
     MatDialogModule,
     MatSelectModule,
-    MatIconModule
+    MatIconModule,
+    MatGridListModule
   ]
 })
 export class AngularMaterialModule { }
