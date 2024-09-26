@@ -10,6 +10,7 @@ const sellPropSchema = mongoose.Schema({
     brojSpavacihSoba: {type: Number, required: true},
     slike: [{type: String, required: true}],
     opis: {type: String},
+    agent: {type: mongoose.Schema.Types.ObjectId, ref: 'Agent', require: true}
 })
 
 module.exports = mongoose.model('SellProp', sellPropSchema)

@@ -10,7 +10,7 @@ import { Router } from '@angular/router';
 export class SellPropService {
 
   private sellProps: SellProp[] = []
-  private sellPropsUpdated = new Subject<SellProp[]>()
+  private sellPropsUpdated = new Subject<{sellProps: SellProp[], sellPropsCount: number}>()
 
   constructor(private http: HttpClient, private router: Router) { }
   
@@ -18,11 +18,14 @@ export class SellPropService {
     return this.sellPropsUpdated.asObservable()
   }
 
-  getSellProps() {
-    this.http.get<{message: string, sellPorps: SellProp[]}>('http://localhost:3000/zid/sell-props').subscribe((responseData) => {
-      this.sellProps = responseData.sellPorps
-      this.sellPropsUpdated.next([...this.sellProps])
-    })
+  getSellProps(propsPerPage: number, currentPage: number) {
+    const queryParams = `?pagesize=${propsPerPage}&page=${currentPage}`
+    this.http.get<{message: string, sellPorps: SellProp[], maxProps: number}>('http://localhost:3000/zid/sell-props'+queryParams)
+      .subscribe((responseData) => {
+        console.log(responseData);
+        this.sellProps = responseData.sellPorps
+        this.sellPropsUpdated.next({sellProps: [...this.sellProps], sellPropsCount: responseData.maxProps})
+      })
   }
 
   getSellProp(id: string) {
@@ -40,17 +43,6 @@ export class SellPropService {
     slike: File[],
     opis: string) {
 
-      // const newSellProp: SellProp = {
-      //   _id: 'null',
-      //   tip: tip,
-      //   povrsina: povrsina,
-      //   cenaKvadrata: cenaKvadrata,
-      //   struktura: struktura,
-      //   sprat: sprat,
-      //   brojSpavacihSoba: brojSpavacihSoba,
-      //   opis: opis
-      // }
-
       const newSellProp = new FormData()
       newSellProp.append('tip', tip),
       newSellProp.append('povrsina', povrsina.toString())
@@ -66,21 +58,6 @@ export class SellPropService {
       
       
       this.http.post<{message: string, sellProp: SellProp}>('http://localhost:3000/zid/sell-props', newSellProp).subscribe((responseData) => {
-        const tempSellProp: SellProp = {
-          _id: responseData.sellProp._id,
-          tip: tip,
-          povrsina: povrsina,
-          cenaKvadrata: cenaKvadrata,
-          struktura: struktura,
-          sprat: sprat,
-          brojSpavacihSoba: brojSpavacihSoba,
-          slike: responseData.sellProp.slike,
-          opis: opis
-        }
-
-        console.log(responseData.message);
-        this.sellProps.push(tempSellProp)
-        this.sellPropsUpdated.next([...this.sellProps])
         this.router.navigate(['/sell-prop-list'])
       })
   }
@@ -118,35 +95,14 @@ export class SellPropService {
       }
 
       this.http.put('http://localhost:3000/zid/sell-props/' + id, formData).subscribe(response => {
-        const updatedSellProps = [...this.sellProps]
-        const oldSellPropIndex = updatedSellProps.findIndex(p => p._id === id)
-        const tempSellProp: SellProp = {
-          _id: id,
-          tip: tip,
-          povrsina: povrsina,
-          cenaKvadrata: cenaKvadrata,
-          struktura: struktura,
-          sprat: sprat,
-          brojSpavacihSoba: brojSpavacihSoba,
-          slike: [...slike.oldImages, ...slike.newImages],
-          opis: opis
-        }
-        updatedSellProps[oldSellPropIndex] = tempSellProp
-        this.sellProps = updatedSellProps
-        this.sellPropsUpdated.next([...this.sellProps])
         this.router.navigate(['/sell-prop-list'])
       })
 
     }
 
-  deleteSellProp(propId: string) {
-    this.http.delete<{message: string}>('http://localhost:3000/zid/sell-props/' + propId).subscribe((responseData) => {
-      console.log(responseData.message);
-      const updatedSellProps = this.sellProps.filter((prop) => prop._id !== propId)
-      this.sellProps = updatedSellProps
-      this.sellPropsUpdated.next(this.sellProps)
-    })
-  }
 
+  deleteSellProp(propId: string) {
+    return this.http.delete<{message: string}>('http://localhost:3000/zid/sell-props/' + propId)
+  }
 
 }

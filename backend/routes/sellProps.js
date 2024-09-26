@@ -2,6 +2,8 @@ const express = require('express')
 const multer = require('multer')
 
 const SellProp = require('../models/sellProp')
+const checkAuth = require('../middleware/check-auth')
+const agent = require('../models/agent')
 
 const router = express.Router()
 
@@ -30,42 +32,27 @@ const storage = multer.diskStorage({
 
 
 router.get('/', (req, res, next) => {
+    const pageSize = +req.query.pagesize
+    const currentPage = +req.query.page
+    const propQuery = SellProp.find()
+    let fetchedProps
 
-    const sellProps = [
-        {
-            _id:'111', 
-            tip: 'stan', 
-            povrsina:45, 
-            cenaKvadrata: 2000, 
-            struktura: 'dvosoban', 
-            sprat: 2, 
-            brojSpavacihSoba: 2
-        },
-        {
-            _id:'222', 
-            tip: 'stan', 
-            povrsina:90, 
-            cenaKvadrata: 1800, 
-            struktura: 'cetvorosoban', 
-            sprat: 4, 
-            brojSpavacihSoba: 4
-        },
-        {
-            _id:'333', 
-            tip: 'stan', 
-            povrsina:30, 
-            cenaKvadrata: 2500, 
-            struktura: 'garsonjera', 
-            sprat: 1, 
-            brojSpavacihSoba: 1
-        }
-    ]
-    SellProp.find().then((documents => {
+    if (pageSize && currentPage) {
+        propQuery.skip(pageSize * (currentPage - 1)).limit(pageSize)
+    }
+
+    propQuery
+    .then(documents => {
+        fetchedProps = documents
+        return SellProp.countDocuments()
+    })
+    .then(count => {
         res.status(200).json({
             message: 'Properties fetched!',
-            sellPorps: documents
+            sellPorps: fetchedProps,
+            maxProps: count
         })
-    }))
+    })
 })
 
 const upload = multer({storage: storage})
@@ -83,7 +70,7 @@ router.get('/:id', (req, res, next) => {
     })
 })
 
-router.post('/', upload.array('slike', 20), (req, res, next) => {
+router.post('/', checkAuth, upload.array('slike', 20), (req, res, next) => {
 
     const url = req.protocol + '://' + req.get('host') // constructs url to our server
 
@@ -97,7 +84,8 @@ router.post('/', upload.array('slike', 20), (req, res, next) => {
         sprat: req.body.sprat,
         brojSpavacihSoba: req.body.brojSpavacihSoba,
         slike: imagePaths,
-        opis: req.body.opis
+        opis: req.body.opis,
+        agent: req.agentData.agentId
     })
     sellProp.save().then(newProp => {
         res.status(201).json({
@@ -111,7 +99,7 @@ router.post('/', upload.array('slike', 20), (req, res, next) => {
 })
 
 
-router.put('/:id', upload.array('slike', 20), (req, res, next) => {
+router.put('/:id', checkAuth, upload.array('slike', 20), (req, res, next) => {
     const id = req.params.id;
   
     // URL construction for the server
@@ -138,13 +126,18 @@ router.put('/:id', upload.array('slike', 20), (req, res, next) => {
       sprat: req.body.sprat,
       brojSpavacihSoba: req.body.brojSpavacihSoba,
       slike: updatedImages, // Combined image URLs
-      opis: req.body.opis
+      opis: req.body.opis,
+      agent: req.agentData.agentId
     };
   
     // Perform the update
-    SellProp.updateOne({ _id: id }, { $set: updatedProp })
+    SellProp.updateOne({ _id: id, agent: req.agentData.agentId }, { $set: updatedProp })
       .then(result => {
-        res.status(200).json({ message: 'Update successful!' });
+        if (result.nModified > 0) {
+            res.status(200).json({ message: 'Update successful!' });
+        } else {
+            res.status(401).json({ message: 'Not authorized!' });
+        }
       })
       .catch(err => {
         res.status(500).json({ message: 'Error updating property', error: err });
@@ -153,9 +146,14 @@ router.put('/:id', upload.array('slike', 20), (req, res, next) => {
 
 
 
-router.delete('/:id', (req, res, next) => {
-    SellProp.deleteOne({_id: req.params.id}).then((result) => {
-        res.status(200).json({message: 'Property deleted!'})
+router.delete('/:id', checkAuth, (req, res, next) => {
+    SellProp.deleteOne({_id: req.params.id, agent: req.agentData.agentId}).then((result) => {
+        console.log(result);
+        if (result.deletedCount > 0) {
+            res.status(200).json({message: 'Property deleted!'})
+        } else {
+            res.status(401).json({ message: 'Not authorized!' });
+        }
     })
 })
 

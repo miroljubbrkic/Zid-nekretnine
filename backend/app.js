@@ -5,6 +5,7 @@ const mongoose = require('mongoose')
 
 const SellProp = require('./models/sellProp')
 const sellPropsRoutes = require('./routes/sellProps')
+const agentsRoutes = require('./routes/agents')
 
 const app = express()
 
@@ -38,5 +39,6 @@ app.use((req, res, next) => {
 // app.use(sellPropsRoutes)
 app.use('/zid/sell-props', sellPropsRoutes)
 // app.use('/zid', sellPropsRoutes);
+app.use('/zid/agents', agentsRoutes)
 
 module.exports = app

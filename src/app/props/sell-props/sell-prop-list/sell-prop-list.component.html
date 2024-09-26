@@ -20,7 +20,7 @@
             </div>
         </div>
 
-        <mat-action-row>
+        <mat-action-row *ngIf="agentIsAuthenticated && agentId == prop.agent">
 
             <a mat-fab extended color="primary" [routerLink]="['/sell-prop-edit', prop._id]">
                 <mat-icon>edit</mat-icon>
@@ -35,4 +35,11 @@
         </mat-action-row>
     </mat-expansion-panel>
 </mat-accordion>
+<mat-paginator 
+    [length]="totalProps" 
+    [pageSize]="propsPerPage" 
+    [pageSizeOptions]="pageSizeOptions" 
+    (page)="onChangePage($event)" 
+    *ngIf="sellProps.length > 0">
+</mat-paginator>
 <p class="info-text mat-body-1" *ngIf="sellProps.length <= 0 && !isLoading">No properties added yet!</p>

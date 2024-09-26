@@ -76,7 +76,8 @@ export class SellPropFormComponent implements OnInit {
             sprat: propData.sellProp.sprat,
             brojSpavacihSoba: propData.sellProp.brojSpavacihSoba,
             slike: propData.sellProp.slike,
-            opis: propData.sellProp.opis
+            opis: propData.sellProp.opis,
+            agent: propData.sellProp.agent
           }
           this.form.setValue({
             'tip': this.sellProp.tip,

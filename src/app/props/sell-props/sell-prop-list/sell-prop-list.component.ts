@@ -1,7 +1,9 @@
 import { Component } from '@angular/core';
 import { SellProp } from '../sell-prop.model';
-import { Subscription } from 'rxjs';
+import { max, Subscription } from 'rxjs';
 import { SellPropService } from '../sell-prop.service';
+import { PageEvent } from '@angular/material/paginator';
+import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({
   selector: 'app-sell-prop-list',
@@ -12,7 +14,15 @@ export class SellPropListComponent {
 
   sellProps: SellProp[] = []
   isLoading = false
+  totalProps = 0
+  propsPerPage = 2
+  currentPage = 1
+  pageSizeOptions = [1, 2, 5, 10]
+  agentIsAuthenticated = false
+  agentId!: string | null
   private sellPropSub!: Subscription
+  private authStatusSub!: Subscription
+
 
   tipovi = [
     { value: '1', name: 'Stan' },
@@ -28,17 +38,30 @@ export class SellPropListComponent {
     { value: '5', name: 'Petosoban' }
   ]
 
-  constructor(public sellPropService: SellPropService) {}
+  constructor(public sellPropService: SellPropService, private authService: AuthService) {}
   
   
   ngOnInit(): void {
-    this.sellPropService.getSellProps()
+    this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
+    this.agentId = this.authService.getAgentId()
     this.isLoading = true
-    this.sellPropSub = this.sellPropService.getSellPropUpdateListener().subscribe((sellProps: SellProp[]) => {
+    this.sellPropSub = this.sellPropService.getSellPropUpdateListener().subscribe((sellPropData: {sellProps: SellProp[], sellPropsCount: number}) => {
       this.isLoading = false
-      this.sellProps = sellProps
+      this.totalProps = sellPropData.sellPropsCount
+      this.sellProps = sellPropData.sellProps
     })
-    
+    this.agentIsAuthenticated = this.authService.getIsAuthenticated()
+    this.authStatusSub = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
+      this.agentIsAuthenticated = isAuthenticated
+      this.agentId = this.authService.getAgentId()
+    })
+  }
+
+  onChangePage(pageData: PageEvent) {
+    this.isLoading = true
+    this.currentPage = pageData.pageIndex + 1
+    this.propsPerPage = pageData.pageSize
+    this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
   }
 
   getTip(value: string): string {
@@ -52,10 +75,19 @@ export class SellPropListComponent {
   }
 
   onDelete(id: string) {
-    this.sellPropService.deleteSellProp(id)
+    this.isLoading = true
+    this.sellPropService.deleteSellProp(id).subscribe(() => {
+      this.totalProps --
+      const maxPage = Math.ceil(this.totalProps/this.propsPerPage)
+      if (this.currentPage > maxPage) {
+        this.currentPage = maxPage > 0 ? maxPage : 1
+      }
+      this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
+    })
   }
 
   ngOnDestroy(): void {
     this.sellPropSub.unsubscribe()
+    this.authStatusSub.unsubscribe()
   }
 }

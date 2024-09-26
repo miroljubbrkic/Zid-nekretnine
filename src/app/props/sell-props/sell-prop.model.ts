@@ -8,5 +8,6 @@ export interface SellProp {
     sprat: number
     brojSpavacihSoba: number,
     slike: string[],
-    opis: string
+    opis: string,
+    agent: string
 }

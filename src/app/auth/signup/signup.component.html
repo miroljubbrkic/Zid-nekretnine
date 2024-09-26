@@ -1,0 +1,90 @@
+
+
+<mat-card>
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+    <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
+
+        <mat-form-field>
+            <input 
+            matInput 
+            name="email"
+            type="email"
+            placeholder="E-Mail"
+            ngModel
+            #emailInput="ngModel"
+            required
+            email>
+
+            <mat-error *ngIf="emailInput.invalid">Unesite ispravan email</mat-error>
+        </mat-form-field>
+
+
+        <mat-form-field>
+            <input 
+            matInput
+            name="lozinka"
+            type="lozinka"
+            placeholder="Lozinka"
+            ngModel
+            #lozinkaInput="ngModel"
+            required>
+
+            <mat-error *ngIf="lozinkaInput.invalid">Unesite lozinku</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input 
+            matInput
+            name="ime"
+            type="text"
+            placeholder="Ime"
+            ngModel
+            #imeInput="ngModel"
+            required>
+
+            <mat-error *ngIf="imeInput.invalid">Unesite ime</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input 
+            matInput
+            name="prezime"
+            type="text"
+            placeholder="Prezime"
+            ngModel
+            #prezimeInput="ngModel"
+            required>
+
+            <mat-error *ngIf="prezimeInput.invalid">Unesite prezime</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <input 
+            matInput
+            name="telefon"
+            type="tel"
+            placeholder="Telefon"
+            ngModel
+            #telefonInput="ngModel"
+            required>
+
+            <mat-error *ngIf="telefonInput.invalid">Unesite broj telefona</mat-error>
+        </mat-form-field>
+
+        <button 
+            mat-raised-button 
+            color="accent"
+            type="submit"
+            *ngIf="!isLoading">Registruj se</button>
+
+        <button
+            mat-raised-button
+            color="primary"
+            type="button"
+            (click)="test()">
+            Test data
+        </button>
+
+
+    </form>
+</mat-card>

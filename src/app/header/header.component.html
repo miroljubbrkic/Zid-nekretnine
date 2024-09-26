@@ -4,26 +4,27 @@
     </span>
     <span class="spacer"></span>
     <ul>
-        <!-- <li *ngIf="userIsAuthenticated"> -->
-            <a mat-button routerLink="/sell-prop-list" routerLinkActive='active-link'>Buy</a>
-        <!-- </li> -->
-         <!-- <li *ngIf="userIsAuthenticated"> -->
-            <a mat-button routerLink="/create" routerLinkActive='active-link'>Rent</a>
-        <!-- </li> -->
-         <!-- <li *ngIf="userIsAuthenticated"> -->
-            <a mat-button routerLink="/sell-prop-create" routerLinkActive='active-link'>Add for Sell</a>
-        <!-- </li> -->
-         <!-- <li *ngIf="userIsAuthenticated"> -->
-            <a mat-button routerLink="/create" routerLinkActive='active-link'>Add for Rent</a>
-        <!-- </li> -->
-        <!-- <li *ngIf="!userIsAuthenticated"> -->
-            <a mat-button routerLink="/auth/login" routerLinkActive='active-link'>Login</a>
-        <!-- </li> -->
-        <!-- <li *ngIf="!userIsAuthenticated"> -->
-            <a mat-button routerLink="/auth/signup" routerLinkActive='active-link'>Signup</a>
-        <!-- </li> -->
-        <!-- <li *ngIf="userIsAuthenticated"> -->
-            <!-- <button mat-button (click)="onLogout()">Logout</button> -->
-        <!-- </li> -->
+        <li *ngIf="agentIsAuthenticated">
+            <a mat-button routerLink="/sell-prop-list" routerLinkActive='active-link'>Prodaja</a>
+        </li>
+         <li *ngIf="agentIsAuthenticated">
+            <a mat-button routerLink="/create" routerLinkActive='active-link'>Iznajmljivanje</a>
+        </li>
+         <li *ngIf="agentIsAuthenticated">
+            <a mat-button routerLink="/sell-prop-create" routerLinkActive='active-link'>Dodaj za prodaju</a>
+        </li>
+         <li *ngIf="agentIsAuthenticated">
+            <a mat-button routerLink="/create" routerLinkActive='active-link'>Dodaj za iznajmljivanje</a>
+        </li>
+        <li *ngIf="!agentIsAuthenticated">
+            <a mat-button routerLink="/login" routerLinkActive='active-link'>Prijavi se</a>
+        </li>
+        <li *ngIf="!agentIsAuthenticated">
+            <a mat-button routerLink="/signup" routerLinkActive='active-link'>Registruj se</a>
+        </li>
+
+        <li *ngIf="agentIsAuthenticated">
+            <button mat-button (click)="onLogout()">Odjavi se</button>
+        </li>
     </ul>
 </mat-toolbar>
