@@ -51,9 +51,12 @@ export class SellPropService {
       newSellProp.append('sprat', sprat.toString())
       newSellProp.append('brojSpavacihSoba', brojSpavacihSoba.toString())
       newSellProp.append('opis', opis)
-      slike.forEach((file, index) => {
-        newSellProp.append('slike', file, Date.now() + '-' + file.name.split('.')[0] + '-' + index); // Append files with unique names
-      });
+      console.log(slike);
+      if (slike) {
+        slike.forEach((file, index) => {
+          newSellProp.append('slike', file, Date.now() + '-' + file.name.split('.')[0] + '-' + index); // Append files with unique names
+        });
+      }
 
       
       

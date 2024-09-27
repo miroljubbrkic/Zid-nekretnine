@@ -46,10 +46,11 @@ export class AuthService {
     }
     console.log(agent);
     this.http.post('http://localhost:3000/zid/agents/signup', agent)
-      .subscribe(response => {
-        console.log(response);
+      .subscribe(() => {
+        this.router.navigate(['/login'])
+      }, error => {
+        this.authStatusListener.next(false)
       })
-      this.router.navigate(['/login'])
   }
 
 
@@ -80,6 +81,8 @@ export class AuthService {
           this.saveAuthData(token, expirationDate, this.agentId)
           this.router.navigate(['/sell-prop-list'])
         }
+      }, error => {
+        this.authStatusListener.next(false)
       })
   }
 

@@ -1,17 +1,19 @@
 import { validateImage } from "image-validator";
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SellPropService } from '../sell-prop.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { SellProp } from '../sell-prop.model';
+import { Subscription } from "rxjs";
+import { AuthService } from "src/app/auth/auth.service";
 
 @Component({
   selector: 'app-sell-prop-form',
   templateUrl: './sell-prop-form.component.html',
   styleUrls: ['./sell-prop-form.component.css']
 })
-export class SellPropFormComponent implements OnInit {
+export class SellPropFormComponent implements OnInit, OnDestroy {
   tipovi = [
     { value: '1', name: 'Stan' },
     { value: '2', name: 'Kuca' },
@@ -43,11 +45,16 @@ export class SellPropFormComponent implements OnInit {
   private mode = 'create'
   private propId!: any
   private sellProp!: SellProp
+  private authStatusSub!: Subscription
   
-  constructor (public sellPropService: SellPropService, public route: ActivatedRoute) {}
+  constructor (public sellPropService: SellPropService, public route: ActivatedRoute, private authService: AuthService) {}
+  
 
 
   ngOnInit(): void {
+    this.authStatusSub = this.authService.getAuthStatusListener().subscribe(authStatus => {
+      this.isLoading = false
+    })
 
     this.form = new FormGroup({
       'tip': new FormControl(null, {validators: [Validators.required]}),
@@ -234,5 +241,9 @@ export class SellPropFormComponent implements OnInit {
 
     this.form.reset()
     
+  }
+
+  ngOnDestroy(): void {
+    this.authStatusSub.unsubscribe()
   }
 }

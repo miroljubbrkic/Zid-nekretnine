@@ -83,6 +83,8 @@ export class SellPropListComponent {
         this.currentPage = maxPage > 0 ? maxPage : 1
       }
       this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
+    }, () => {
+      this.isLoading = false
     })
   }
 

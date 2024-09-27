@@ -53,20 +53,31 @@ router.get('/', (req, res, next) => {
             maxProps: count
         })
     })
+    .catch(error => {
+        res.status(500).json({
+            message: 'Neuspešno dobavljanje oglasa!'
+        })
+    })
 })
 
 const upload = multer({storage: storage})
 
 router.get('/:id', (req, res, next) => {
-    SellProp.findById(req.params.id).then(document => {
+    SellProp.findById(req.params.id)
+    .then(document => {
         if (document) {
             res.status(200).json({
                 message: 'Property fetched!',
                 sellProp: document
             })
         } else {
-            res.status(404).json({message: 'Property not found!'})
+            res.status(404).json({message: 'Oglas nije pronadjen!'})
         }
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: 'Neuspešno dobavljanje oglasa!'
+        })
     })
 })
 
@@ -87,13 +98,19 @@ router.post('/', checkAuth, upload.array('slike', 20), (req, res, next) => {
         opis: req.body.opis,
         agent: req.agentData.agentId
     })
-    sellProp.save().then(newProp => {
+    sellProp.save()
+    .then(newProp => {
         res.status(201).json({
             message: 'Property added!',
             sellProp: {
                 ...newProp,
                 _id: newProp._id,
             }
+        })
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: 'Kreiranje oglasa nije uspelo'
         })
     })
 })
@@ -133,27 +150,34 @@ router.put('/:id', checkAuth, upload.array('slike', 20), (req, res, next) => {
     // Perform the update
     SellProp.updateOne({ _id: id, agent: req.agentData.agentId }, { $set: updatedProp })
       .then(result => {
-        if (result.nModified > 0) {
+        console.log(result);
+        if (result.matchedCount > 0) {
             res.status(200).json({ message: 'Update successful!' });
         } else {
             res.status(401).json({ message: 'Not authorized!' });
         }
       })
       .catch(err => {
-        res.status(500).json({ message: 'Error updating property', error: err });
+        res.status(500).json({ message: 'Greška prilikom izmene oglasa', error: err });
       });
   });
 
 
 
 router.delete('/:id', checkAuth, (req, res, next) => {
-    SellProp.deleteOne({_id: req.params.id, agent: req.agentData.agentId}).then((result) => {
+    SellProp.deleteOne({_id: req.params.id, agent: req.agentData.agentId})
+    .then((result) => {
         console.log(result);
         if (result.deletedCount > 0) {
             res.status(200).json({message: 'Property deleted!'})
         } else {
             res.status(401).json({ message: 'Not authorized!' });
         }
+    })
+    .catch(error => {
+        res.status(500).json({
+            message: 'Neuspešno brisanje oglasa!'
+        })
     })
 })
 

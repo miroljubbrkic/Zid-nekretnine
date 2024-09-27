@@ -1,52 +1,49 @@
-
-
-<mat-card>
+<mat-card class="login-card">
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <form (submit)="onLogin(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">
-
-        <mat-form-field>
-            <input 
-            matInput 
-            name="email"
-            type="email"
-            placeholder="E-Mail"
-            ngModel
-            #emailInput="ngModel"
-            required
-            email>
-
-            <mat-error *ngIf="emailInput.invalid">Unesite ispravan email</mat-error>
-        </mat-form-field>
-
-
-        <mat-form-field>
-            <input 
-            matInput
-            name="lozinka"
-            type="lozinka"
-            placeholder="Lozinka"
-            ngModel
-            #lozinkaInput="ngModel"
-            required>
-
-            <mat-error *ngIf="lozinkaInput.invalid">Unesite lozinku</mat-error>
-        </mat-form-field>
-
-        <button 
-            mat-raised-button 
-            color="accent"
-            type="submit"
-            *ngIf="!isLoading">Prijavi se</button>
-
-        <button
-            mat-raised-button
-            color="primary"
-            type="button"
-            (click)="test()">
-            Test
-        </button>
-
-
-
+      
+      <mat-form-field>
+        <mat-icon matPrefix>email</mat-icon>
+        <input 
+          matInput 
+          name="email"
+          type="email"
+          placeholder="E-Mail"
+          ngModel
+          #emailInput="ngModel"
+          required
+          email>
+        <mat-error *ngIf="emailInput.invalid && emailInput.touched">Unesite ispravan email</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input 
+          matInput
+          name="lozinka"
+          type="password"
+          placeholder="Lozinka"
+          ngModel
+          #lozinkaInput="ngModel"
+          required>
+        <mat-error *ngIf="lozinkaInput.invalid && lozinkaInput.touched">Unesite lozinku</mat-error>
+      </mat-form-field>
+  
+      <button 
+        mat-raised-button 
+        color="accent"
+        type="submit"
+        *ngIf="!isLoading"
+        [disabled]="loginForm.invalid">Prijavi se</button>
+  
+      <button
+        mat-raised-button
+        color="primary"
+        type="button"
+        (click)="test()">
+        Test
+      </button>
+  
     </form>
-</mat-card>
+  </mat-card>
+  
