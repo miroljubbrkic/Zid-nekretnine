@@ -1,45 +1,60 @@
-
-<mat-progress-bar *ngIf="isLoading" mode="indeterminate" value="40" color="warn"></mat-progress-bar>
-<mat-accordion multi="true" *ngIf="sellProps.length > 0 && !isLoading">
-    <mat-expansion-panel *ngFor="let prop of sellProps">
-        <mat-expansion-panel-header>
-            Prodaja: {{ getTip(prop.tip) }} - {{(prop.povrsina*prop.cenaKvadrata) | currency:'EUR'}} 
-        </mat-expansion-panel-header>
-        <p>Povrsina: {{ prop.povrsina }}</p>
-        <p>Struktura: {{ getStruktura(prop.struktura) }}</p>
-        <p>Sprat: {{ prop.sprat }}</p>
-        <p>Broj spavacih soba: {{ prop.brojSpavacihSoba }}</p>
-        <p>Opis: {{ prop.opis }}</p>
-
-        <!-- <div class="prop-image" *ngFor="let slika of prop.slike">
-            <img [src]="slika" alt="">
-        </div> -->
-        <div *ngIf="prop.slike && prop.slike.length > 0" class="images-container">
-            <div *ngFor="let img of prop.slike" class="image-item">
-                <img [src]="img" alt="Property Image" class="property-image" />
-            </div>
-        </div>
-
-        <mat-action-row *ngIf="agentIsAuthenticated && agentId == prop.agent">
-
-            <a mat-fab extended color="primary" [routerLink]="['/sell-prop-edit', prop._id]">
-                <mat-icon>edit</mat-icon>
-                Edit
-            </a>
-
-            <button mat-fab extended color="warn" (click)="onDelete(prop._id)">
-                <mat-icon>delete</mat-icon>
-                Delete
-            </button>
-
-        </mat-action-row>
-    </mat-expansion-panel>
-</mat-accordion>
-<mat-paginator 
-    [length]="totalProps" 
-    [pageSize]="propsPerPage" 
-    [pageSizeOptions]="pageSizeOptions" 
-    (page)="onChangePage($event)" 
-    *ngIf="sellProps.length > 0">
-</mat-paginator>
-<p class="info-text mat-body-1" *ngIf="sellProps.length <= 0 && !isLoading">No properties added yet!</p>
+<mat-card class="sell-prop-list-container">
+    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
+    
+    <div class="props-grid" *ngIf="sellProps.length > 0 && !isLoading">
+      <!-- Apply routerLink directly to the mat-card -->
+      <mat-card 
+        class="prop-card" 
+        *ngFor="let prop of sellProps" 
+        [routerLink]="['/sell-prop', prop._id]"
+        class="clickable-card"
+        matTooltip="View Details"
+        tooltipPosition="above"
+        [routerLink]="['/sell-prop', prop._id]">
+        
+        <mat-card-header>
+          <div class="header-content">
+            <mat-card-title>{{ getTip(prop.tip) }}</mat-card-title>
+            <mat-card-subtitle>{{ (prop.povrsina * prop.cenaKvadrata) | currency:'EUR' }}</mat-card-subtitle>
+          </div>
+        </mat-card-header>
+  
+        <mat-card-content>
+          <!-- Thumbnail Image -->
+          <div *ngIf="prop.slike && prop.slike.length > 0" class="thumbnail-container">
+            <img [src]="prop.slike[0]" alt="Property Image" class="thumbnail-image" />
+          </div>
+          
+          <!-- Property Details -->
+          <div class="prop-details">
+            <p>Površina: <strong>{{ prop.povrsina }} m²</strong></p>
+            <p>Struktura: <strong>{{ getStruktura(prop.struktura) }}</strong></p>
+            <p>Sprat: <strong>{{ prop.sprat }}</strong></p>
+            <p>Broj spavaćih soba: <strong>{{ prop.brojSpavacihSoba }}</strong></p>
+          </div>
+        </mat-card-content>
+  
+        <!-- Action Buttons -->
+        <mat-card-actions *ngIf="agentIsAuthenticated && agentId == prop.agent">
+          <a mat-icon-button color="primary" [routerLink]="['/sell-prop-edit', prop._id]" (click)="$event.stopPropagation()">
+            <mat-icon>edit</mat-icon>
+          </a>
+  
+          <button mat-icon-button color="warn" (click)="onDelete(prop._id); $event.stopPropagation();">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  
+    <mat-paginator 
+      [length]="totalProps" 
+      [pageSize]="propsPerPage" 
+      [pageSizeOptions]="pageSizeOptions" 
+      (page)="onChangePage($event)" 
+      *ngIf="sellProps.length > 0">
+    </mat-paginator>
+    
+    <p class="info-text mat-body-1" *ngIf="sellProps.length <= 0 && !isLoading">No properties added yet!</p>
+  </mat-card>
+  

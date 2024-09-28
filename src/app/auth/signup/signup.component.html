@@ -1,90 +1,130 @@
-
-
-<mat-card>
+<mat-card class="signup-card">
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <form (submit)="onSignup(signupForm)" #signupForm="ngForm" *ngIf="!isLoading">
-
-        <mat-form-field>
-            <input 
-            matInput 
-            name="email"
-            type="email"
-            placeholder="E-Mail"
-            ngModel
-            #emailInput="ngModel"
-            required
-            email>
-
-            <mat-error *ngIf="emailInput.invalid">Unesite ispravan email</mat-error>
+      
+      <mat-form-field>
+        <mat-icon matPrefix>email</mat-icon>
+        <input 
+          matInput 
+          name="email"
+          type="email"
+          placeholder="E-Mail"
+          ngModel
+          #emailInput="ngModel"
+          required
+          email>
+        <mat-error *ngIf="emailInput.invalid && emailInput.touched">Unesite ispravan email</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input 
+          matInput
+          name="lozinka"
+          type="password"
+          placeholder="Lozinka"
+          ngModel
+          #lozinkaInput="ngModel"
+          required>
+        <mat-error *ngIf="lozinkaInput.invalid && lozinkaInput.touched">Unesite lozinku</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-icon matPrefix>person</mat-icon>
+        <input 
+          matInput
+          name="ime"
+          type="text"
+          placeholder="Ime"
+          ngModel
+          #imeInput="ngModel"
+          required>
+        <mat-error *ngIf="imeInput.invalid && imeInput.touched">Unesite ime</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field>
+        <mat-icon matPrefix>person</mat-icon>
+        <input 
+          matInput
+          name="prezime"
+          type="text"
+          placeholder="Prezime"
+          ngModel
+          #prezimeInput="ngModel"
+          required>
+        <mat-error *ngIf="prezimeInput.invalid && prezimeInput.touched">Unesite prezime</mat-error>
+      </mat-form-field>
+  
+      <!-- <mat-form-field>
+        <mat-icon matPrefix>phone</mat-icon>
+        <input 
+          matInput
+          name="telefon"
+          type="tel"
+          placeholder="Telefon"
+          ngModel
+          #telefonInput="ngModel"
+          required>
+        <mat-error *ngIf="telefonInput.invalid && telefonInput.touched">Unesite broj telefona</mat-error>
+      </mat-form-field> -->
+      <!-- <mat-form-field>
+        <mat-icon matPrefix>phone</mat-icon>
+        <input 
+          matInput
+          name="telefon"
+          type="tel"
+          placeholder="Telefon"
+          ngModel
+          #telefonInput="ngModel"
+          required
+          pattern="^(?:\+381|0)(6[0-689]|1[0-9])[0-9]{6,7}$">
+        <mat-error *ngIf="telefonInput.invalid && telefonInput.touched">
+          Unesite validan broj telefona u formatu +381641234567 ili 0641234567
+        </mat-error>
+      </mat-form-field> -->
+      <div class="phone-container">
+        <!-- Phone Format Selector -->
+        <mat-form-field class="format-select">
+          <mat-select [(ngModel)]="phoneFormat" name="phoneFormat" required>
+            <mat-option value="+381">+381</mat-option>
+            <mat-option value="0">0</mat-option>
+          </mat-select>
         </mat-form-field>
-
-
-        <mat-form-field>
-            <input 
-            matInput
-            name="lozinka"
-            type="lozinka"
-            placeholder="Lozinka"
-            ngModel
-            #lozinkaInput="ngModel"
-            required>
-
-            <mat-error *ngIf="lozinkaInput.invalid">Unesite lozinku</mat-error>
-        </mat-form-field>
-
-        <mat-form-field>
-            <input 
-            matInput
-            name="ime"
-            type="text"
-            placeholder="Ime"
-            ngModel
-            #imeInput="ngModel"
-            required>
-
-            <mat-error *ngIf="imeInput.invalid">Unesite ime</mat-error>
-        </mat-form-field>
-
-        <mat-form-field>
-            <input 
-            matInput
-            name="prezime"
-            type="text"
-            placeholder="Prezime"
-            ngModel
-            #prezimeInput="ngModel"
-            required>
-
-            <mat-error *ngIf="prezimeInput.invalid">Unesite prezime</mat-error>
-        </mat-form-field>
-
-        <mat-form-field>
-            <input 
+  
+        <!-- Phone Number Field -->
+        <mat-form-field class="phone-input">
+          <mat-icon matPrefix>phone</mat-icon>
+          <input 
             matInput
             name="telefon"
             type="tel"
             placeholder="Telefon"
             ngModel
             #telefonInput="ngModel"
+            [pattern]="phoneFormat === '+381' ? '\\+3816[0-689][0-9]{6,7}' : '06[0-689][0-9]{6,7}'"
             required>
-
-            <mat-error *ngIf="telefonInput.invalid">Unesite broj telefona</mat-error>
+          <mat-error *ngIf="telefonInput.invalid && telefonInput.touched">
+            Unesite broj telefona u formatu {{phoneFormat}}64xxxxxxx
+          </mat-error>
         </mat-form-field>
-
+      </div>
+  
+      <div class="button-container">
         <button 
-            mat-raised-button 
-            color="accent"
-            type="submit"
-            *ngIf="!isLoading">Registruj se</button>
-
+          mat-raised-button 
+          color="accent"
+          type="submit"
+          [disabled]="signupForm.invalid"
+          *ngIf="!isLoading">Registruj se</button>
+  
         <button
-            mat-raised-button
-            color="primary"
-            type="button"
-            (click)="test()">
-            Test data
+          mat-raised-button
+          color="primary"
+          type="button"
+          (click)="test()">
+          Test data
         </button>
-
-
+      </div>
     </form>
-</mat-card>
+  </mat-card>
+  

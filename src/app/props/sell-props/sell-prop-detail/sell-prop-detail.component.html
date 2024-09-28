@@ -1,0 +1,40 @@
+<mat-card *ngIf="!isLoading" class="sell-prop-detail-card">
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
+
+  <mat-card-header>
+    <mat-card-title>{{ sellProp.tip }} - {{ (sellProp.povrsina * sellProp.cenaKvadrata) | currency:'EUR' }}</mat-card-title>
+    <mat-card-subtitle>{{ sellProp.struktura }}</mat-card-subtitle>
+  </mat-card-header>
+
+  <mat-card-content>
+    <p><strong>Površina:</strong> {{ sellProp.povrsina }} m²</p>
+    <p><strong>Cena po kvadratu:</strong> {{ sellProp.cenaKvadrata | currency:'EUR' }}</p>
+    <p><strong>Sprat:</strong> {{ sellProp.sprat }}</p>
+    <p><strong>Broj spavaćih soba:</strong> {{ sellProp.brojSpavacihSoba }}</p>
+    <p><strong>Opis:</strong> {{ sellProp.opis }}</p>
+
+    <!-- Image Gallery -->
+    <div *ngIf="sellProp.slike && sellProp.slike.length > 0" class="images-container">
+      <img *ngFor="let img of sellProp.slike" [src]="img" alt="Property Image" class="property-image" (click)="openImageDialog(img)"/>
+    </div>
+  </mat-card-content>
+
+  <!-- Action Buttons -->
+  <mat-card-actions class="action-buttons">
+    <!-- Back Button -->
+    <button mat-raised-button color="primary" (click)="onBack()">
+      <mat-icon>arrow_back</mat-icon> Back
+    </button>
+
+    <!-- Edit and Delete Buttons (Visible only if agent owns the property) -->
+    <div *ngIf="agentIsAuthenticated && agentId == sellProp.agent" class="action-button-group">
+      <a mat-raised-button color="primary" [routerLink]="['/sell-prop-edit', sellProp._id]" (click)="$event.stopPropagation()">
+        <mat-icon>edit</mat-icon> Edit
+      </a>
+
+      <button mat-raised-button color="warn" (click)="onDelete(sellProp._id); $event.stopPropagation();">
+        <mat-icon>delete</mat-icon> Delete
+      </button>
+    </div>
+  </mat-card-actions>
+</mat-card>

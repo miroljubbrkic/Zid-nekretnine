@@ -1,0 +1,34 @@
+<mat-dialog-content class="image-dialog-content" #dialogContainer>
+    <div class="image-container">
+      <img [src]="data.images[currentIndex]" alt="Property Image" class="dialog-image"/>
+      <div class="image-counter">
+        {{ currentIndex + 1 }}/{{ data.images.length }}
+      </div>
+    </div>
+  
+    <!-- Navigation Buttons -->
+    <button mat-icon-button class="nav-button left" (click)="previousImage()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <button mat-icon-button class="nav-button right" (click)="nextImage()">
+      <mat-icon>arrow_forward</mat-icon>
+    </button>
+  
+    <!-- Fullscreen Button -->
+    <button mat-icon-button class="fullscreen-button" (click)="toggleFullscreen()">
+      <mat-icon>{{ isFullscreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+    </button>
+  
+    <!-- Edit and Delete Buttons (Visible only if agent owns the ad) -->
+    <div *ngIf="agentIsAuthenticated && data.agentId === loggedInAgentId" class="action-buttons">
+      <button mat-raised-button color="primary" (click)="onEdit()">
+        <mat-icon>edit</mat-icon>
+        Edit
+      </button>
+      <button mat-raised-button color="warn" (click)="onDelete()">
+        <mat-icon>delete</mat-icon>
+        Delete
+      </button>
+    </div>
+  </mat-dialog-content>
+  

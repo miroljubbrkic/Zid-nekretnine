@@ -86,5 +86,32 @@ router.post('/login', (req, res, next) => {
 })
 
 
+router.get('/:id', (req, res, next) => {
+    const agentId = req.params.id;
+    
+    Agent.findById(agentId)
+      .then(agent => {
+        if (agent) {
+          res.status(200).json({
+            message: 'Agent details fetched successfully',
+            agent: {
+              ime: agent.ime,
+              prezime: agent.prezime,
+              telefon: agent.telefon
+            }
+          });
+        } else {
+          res.status(404).json({ message: 'Agent not found' });
+        }
+      })
+      .catch(error => {
+        res.status(500).json({
+          message: 'Failed to fetch agent details',
+          error: error
+        });
+      });
+  });
+
+
 
 module.exports = router

@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Agent } from './agent.model';
-import { expand, Subject } from 'rxjs';
+import { expand, Observable, Subject } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -32,6 +32,12 @@ export class AuthService {
 
   getAuthStatusListener() {
     return this.authStatusListener.asObservable()
+  }
+
+  getAgentById(agentId: string): Observable<{ message: string, agent: { ime: string, prezime: string, telefon: string } }> {
+    return this.http.get<{ message: string, agent: { ime: string, prezime: string, telefon: string } }>(
+      `http://localhost:3000/zid/agents/${agentId}`
+    );
   }
 
 

@@ -4,6 +4,7 @@ import { max, Subscription } from 'rxjs';
 import { SellPropService } from '../sell-prop.service';
 import { PageEvent } from '@angular/material/paginator';
 import { AuthService } from 'src/app/auth/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sell-prop-list',
@@ -38,7 +39,7 @@ export class SellPropListComponent {
     { value: '5', name: 'Petosoban' }
   ]
 
-  constructor(public sellPropService: SellPropService, private authService: AuthService) {}
+  constructor(public sellPropService: SellPropService, private authService: AuthService, private router: Router) {}
   
   
   ngOnInit(): void {
@@ -55,6 +56,10 @@ export class SellPropListComponent {
       this.agentIsAuthenticated = isAuthenticated
       this.agentId = this.authService.getAgentId()
     })
+  }
+
+  onCardClick(propId: string) {
+    this.router.navigate(['/sell-prop', propId]);
   }
 
   onChangePage(pageData: PageEvent) {

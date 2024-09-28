@@ -17,6 +17,8 @@ import { AngularMaterialModule } from './angular-material.module';
 import { AuthInterceptor } from './auth/auth-interceptor';
 import { ErrorInterceptor } from './error-interceptor';
 import { ErrorComponent } from './error/error.component';
+import { SellPropDetailComponent } from './props/sell-props/sell-prop-detail/sell-prop-detail.component';
+import { ImageDialogComponent } from './props/image-dialog/image-dialog.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +30,9 @@ import { ErrorComponent } from './error/error.component';
     HeaderComponent,
     LoginComponent,
     SignupComponent,
-    ErrorComponent
+    ErrorComponent,
+    SellPropDetailComponent,
+    ImageDialogComponent
   ],
   imports: [
     BrowserModule,

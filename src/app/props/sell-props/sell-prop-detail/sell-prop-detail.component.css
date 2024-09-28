@@ -1,0 +1,42 @@
+/* sell-prop-detail.component.css */
+.sell-prop-detail-card {
+  margin: 20px auto;
+  padding: 20px;
+  max-width: 600px;
+}
+
+.images-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.property-image {
+  cursor: pointer;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.action-button-group {
+  display: flex;
+  gap: 20px; /* Space between edit and delete buttons */
+}
+
+/* Optional: You can add media queries for smaller screens if needed */
+@media (max-width: 600px) {
+  .action-button-group {
+    flex-direction: column;
+    gap: 10px;
+  }
+}

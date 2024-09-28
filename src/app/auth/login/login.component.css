@@ -1,13 +1,36 @@
-mat-form-field {
+/* Center the login card on the page */
+.login-card {
+    max-width: 400px;
+    margin: 5rem auto; /* Adjust margin for vertical centering */
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers the content inside the card */
+  }
+  
+  /* Center form inside the card */
+  form {
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers elements inside the form */
+  }
+  
+  /* Set full width for form fields */
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1.5rem; /* Space between fields */
+  }
+  
+  /* Styling buttons */
+  button {
+    width: 100%;
+    margin-bottom: 1rem; /* Space between buttons */
+  }
+  
+  /* Mat spinner style */
+  mat-spinner {
     margin: auto;
-}
-
-button {
-    width: 15%;
-    margin: 1rem;
-}
-
-mat-spinner {
-    margin: auto;
-}
+    display: block;
+  }
+  

@@ -12,6 +12,7 @@ export class SignupComponent implements OnInit, OnDestroy {
 
   @ViewChild('signupForm') signupForm!: NgForm;
   isLoading = false
+  phoneFormat: string = '+381';
   private authStatusSub!: Subscription
 
   constructor(public authService: AuthService) {}

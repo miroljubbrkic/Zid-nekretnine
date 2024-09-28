@@ -1,13 +1,85 @@
-mat-form-field {
+/* Center the signup card on the page */
+.signup-card {
+    max-width: 500px;
+    margin: 3rem auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers content inside the card */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow for a polished look */
+    border-radius: 8px;
+  }
+  
+  /* Style for the form inside the card */
+  form {
     width: 100%;
-    margin: auto;
-}
-
-button {
-    width: 15%;
-    margin: 1rem;
-}
-
-mat-spinner {
-    margin: auto;
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centers elements inside the form */
+  }
+  
+  /* Full width for form fields with margin between them */
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 1rem; /* Space between fields */
+  }
+  
+  /* Styling for phone number and format selection container */
+  .phone-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+  
+  /* Custom width for phone format selector */
+  .format-select {
+    width: 30%;
+    margin-right: 1rem; /* Space between selector and input */
+  }
+  
+  /* Custom width for phone number input */
+  .phone-input {
+    width: 70%;
+  }
+  
+  /* Style for the button container */
+  .button-container {
+    display: flex;
+    justify-content: space-between; /* Space between buttons */
+    width: 100%;
+  }
+  
+  /* Button styling */
+  button {
+    width: 48%; /* Ensure buttons take half the container width */
+  }
+  
+  /* Styling for the spinner */
+  mat-spinner {
+    margin: 2rem auto;
+  }
+  
+  /* Responsive styling for smaller screens */
+  @media (max-width: 600px) {
+    .signup-card {
+      padding: 1rem;
+      margin: 1rem;
+    }
+  
+    button {
+      width: 100%; /* Full width buttons on smaller screens */
+      margin-bottom: 1rem;
+    }
+  
+    .phone-container {
+      flex-direction: column; /* Stack elements vertically */
+    }
+  
+    .format-select,
+    .phone-input {
+      width: 100%;
+      margin-bottom: 1rem; /* Space between stacked elements */
+    }
+  }
+  

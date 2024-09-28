@@ -1,0 +1,115 @@
+/* Container for the dialog content */
+.image-dialog-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    position: relative; /* To position navigation buttons */
+    overflow: hidden; /* Prevent overflow */
+  }
+  
+  /* Fixed size for the dialog image in normal mode */
+  .dialog-image {
+    max-width: 90%;
+    max-height: 90%;
+    object-fit: contain; /* Ensures the image is fully visible without stretching */
+    border-radius: 8px;
+    z-index: 1; /* Ensure the image is above background elements but below arrows */
+    width: auto; /* Reset width to auto for normal mode */
+    height: auto; /* Reset height to auto for normal mode */
+    transition: width 0.3s ease, height 0.3s ease; /* Smooth transition for size changes */
+  }
+  
+  /* Fullscreen adjustments */
+  :host.fullscreen .dialog-image {
+    width: 100vw; /* Full viewport width */
+    height: 100vh; /* Full viewport height */
+    max-width: 100vw; /* Ensure no scrollbars appear */
+    max-height: 100vh; /* Ensure no scrollbars appear */
+    object-fit: contain; /* Contain image without stretching */
+    object-position: center; /* Center the image */
+    transition: width 0.3s ease, height 0.3s ease; /* Smooth transition for size changes */
+  }
+  
+  /* Image container to position counter */
+  .image-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden; /* Prevent image overflow */
+  }
+  
+  /* Image counter */
+  .image-counter {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    z-index: 2; /* Ensure the counter is above the image */
+  }
+  
+  /* Navigation buttons styling */
+  .nav-button {
+    position: absolute;
+    top: 50%; /* Vertically center the buttons */
+    transform: translateY(-50%); /* Adjust for precise centering */
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    z-index: 3; /* Ensure buttons are on top of the image */
+    transition: background-color 0.2s ease-in-out; /* Smooth transition for hover effect */
+  }
+  
+  .nav-button:hover {
+    background-color: rgba(0, 0, 0, 0.7); /* Darker on hover */
+  }
+  
+  .nav-button.left {
+    left: 20px; /* Position outside the image container */
+  }
+  
+  .nav-button.right {
+    right: 20px; /* Position outside the image container */
+  }
+  
+  .nav-button:disabled {
+    background-color: rgba(0, 0, 0, 0.2);
+    cursor: not-allowed;
+  }
+  
+  /* Fullscreen button styling */
+  .fullscreen-button {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    z-index: 3; /* Ensure button is on top of the image */
+    transition: background-color 0.2s ease-in-out; /* Smooth transition for hover effect */
+  }
+  
+  .fullscreen-button:hover {
+    background-color: rgba(0, 0, 0, 0.7); /* Darker on hover */
+  }
+  
+  /* Remove any additional margin or padding */
+  mat-dialog-container {
+    padding: 0;
+    display: flex; /* Ensure proper centering */
+    justify-content: center; /* Center the content horizontally */
+    align-items: center; /* Center the content vertically */
+    overflow: hidden; /* Prevent any overflow */
+  }
+  
