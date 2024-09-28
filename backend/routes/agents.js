@@ -48,18 +48,19 @@ router.post('/login', (req, res, next) => {
         .then(agent => {
             if (!agent) {
                 return res.status(401).json({
-                    message: 'Auth failed'
+                    message: 'Prijava neuspela!'
                 })
             }
 
             fetchedAgent = agent
+            console.log(fetchedAgent);
 
             return bcrypt.compare(req.body.lozinka, agent.lozinka)
         })
         .then(result => {
             if (!result) {
                 return res.status(401).json({
-                    message: 'Auth failed'
+                    message: 'Prijava neuspešna'
                 })
             }
 
@@ -111,6 +112,7 @@ router.get('/:id', (req, res, next) => {
         });
       });
   });
+  
 
 
 

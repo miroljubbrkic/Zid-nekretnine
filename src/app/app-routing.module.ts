@@ -13,7 +13,7 @@ const routes: Routes = [
   {path: 'sell-prop-edit/:propId', component: SellPropFormComponent, canActivate: [AuthGuard]},
   { path: 'sell-prop/:id', component: SellPropDetailComponent },
   {path: 'login', component: LoginComponent},
-  {path: 'signup', component: SignupComponent}
+  {path: 'signup', component: SignupComponent},
 ];
 
 @NgModule({

@@ -1,60 +1,100 @@
 <mat-card class="sell-prop-list-container">
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
+
+  <!-- Search Filters -->
+  <div class="search-filters">
+    <mat-form-field>
+      <input matInput type="number" placeholder="Min Cena" [(ngModel)]="minCenaKvadrata">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Max Cena" [(ngModel)]="maxCenaKvadrata">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Min Povrsina" [(ngModel)]="minPovrsina">
+    </mat-form-field>
+    <mat-form-field>
+      <input matInput type="number" placeholder="Max Povrsina" [(ngModel)]="maxPovrsina">
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-select placeholder="Struktura" [(ngModel)]="selectedStruktura">
+        <mat-option *ngFor="let struktura of strukture" [value]="struktura.value">
+          {{struktura.name}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
     
-    <div class="props-grid" *ngIf="sellProps.length > 0 && !isLoading">
-      <!-- Apply routerLink directly to the mat-card -->
-      <mat-card 
-        class="prop-card" 
-        *ngFor="let prop of sellProps" 
-        [routerLink]="['/sell-prop', prop._id]"
-        class="clickable-card"
-        matTooltip="View Details"
-        tooltipPosition="above"
-        [routerLink]="['/sell-prop', prop._id]">
-        
-        <mat-card-header>
-          <div class="header-content">
-            <mat-card-title>{{ getTip(prop.tip) }}</mat-card-title>
-            <mat-card-subtitle>{{ (prop.povrsina * prop.cenaKvadrata) | currency:'EUR' }}</mat-card-subtitle>
-          </div>
-        </mat-card-header>
-  
-        <mat-card-content>
-          <!-- Thumbnail Image -->
-          <div *ngIf="prop.slike && prop.slike.length > 0" class="thumbnail-container">
-            <img [src]="prop.slike[0]" alt="Property Image" class="thumbnail-image" />
-          </div>
-          
-          <!-- Property Details -->
-          <div class="prop-details">
-            <p>Površina: <strong>{{ prop.povrsina }} m²</strong></p>
-            <p>Struktura: <strong>{{ getStruktura(prop.struktura) }}</strong></p>
-            <p>Sprat: <strong>{{ prop.sprat }}</strong></p>
-            <p>Broj spavaćih soba: <strong>{{ prop.brojSpavacihSoba }}</strong></p>
-          </div>
-        </mat-card-content>
-  
-        <!-- Action Buttons -->
-        <mat-card-actions *ngIf="agentIsAuthenticated && agentId == prop.agent">
-          <a mat-icon-button color="primary" [routerLink]="['/sell-prop-edit', prop._id]" (click)="$event.stopPropagation()">
-            <mat-icon>edit</mat-icon>
-          </a>
-  
-          <button mat-icon-button color="warn" (click)="onDelete(prop._id); $event.stopPropagation();">
-            <mat-icon>delete</mat-icon>
-          </button>
-        </mat-card-actions>
-      </mat-card>
+    <!-- Button Container -->
+    <div class="button-container">
+      <button 
+        mat-raised-button 
+        color="primary" 
+        (click)="onSearch()"
+        style="margin-right: 10px;">
+        Pretraži
+      </button>
+      <button 
+        mat-raised-button 
+        color="warn" 
+        (click)="onReset()"
+        style="margin-left: 10px;">
+        Resetuj
+      </button>
     </div>
+  </div>
   
-    <mat-paginator 
-      [length]="totalProps" 
-      [pageSize]="propsPerPage" 
-      [pageSizeOptions]="pageSizeOptions" 
-      (page)="onChangePage($event)" 
-      *ngIf="sellProps.length > 0">
-    </mat-paginator>
-    
-    <p class="info-text mat-body-1" *ngIf="sellProps.length <= 0 && !isLoading">No properties added yet!</p>
+
+  <div class="props-grid" *ngIf="sellProps.length > 0 && !isLoading">
+    <mat-card 
+      class="prop-card" 
+      *ngFor="let prop of sellProps" 
+      [routerLink]="['/sell-prop', prop._id]"
+      class="clickable-card"
+      matTooltip="View Details"
+      tooltipPosition="above">
+      
+      <mat-card-header>
+        <div class="header-content">
+          <mat-card-title>{{ getTip(prop.tip) }}</mat-card-title>
+          <mat-card-subtitle>{{ (prop.povrsina * prop.cenaKvadrata) | currency:'EUR' }}</mat-card-subtitle>
+        </div>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div *ngIf="prop.slike && prop.slike.length > 0" class="thumbnail-container">
+          <img [src]="prop.slike[0]" alt="Property Image" class="thumbnail-image" />
+        </div>
+        <div class="prop-details">
+          <p>Površina: <strong>{{ prop.povrsina }} m²</strong></p>
+          <p>Struktura: <strong>{{ getStruktura(prop.struktura) }}</strong></p>
+          <p>Sprat: <strong>{{ prop.sprat }}</strong></p>
+          <p>Broj spavaćih soba: <strong>{{ prop.brojSpavacihSoba }}</strong></p>
+        </div>
+      </mat-card-content>
+
+      <mat-card-actions *ngIf="agentIsAuthenticated && agentId == prop.agent">
+        <a mat-icon-button color="primary" [routerLink]="['/sell-prop-edit', prop._id]" (click)="$event.stopPropagation()">
+          <mat-icon>edit</mat-icon>
+        </a>
+
+        <button mat-icon-button color="warn" (click)="onDelete(prop._id); $event.stopPropagation();">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+
+  <mat-paginator 
+    [length]="totalProps" 
+    [pageSize]="propsPerPage" 
+    [pageSizeOptions]="pageSizeOptions" 
+    (page)="onChangePage($event)" 
+    *ngIf="sellProps.length > 0">
+  </mat-paginator>
+  
+  <mat-card *ngIf="sellProps.length <= 0 && !isLoading" class="no-properties-card">
+    <p class="info-text mat-body-1">Oglasi nisu pronađeni!</p>
   </mat-card>
   
+</mat-card>

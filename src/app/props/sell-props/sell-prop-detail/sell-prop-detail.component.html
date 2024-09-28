@@ -23,17 +23,17 @@
   <mat-card-actions class="action-buttons">
     <!-- Back Button -->
     <button mat-raised-button color="primary" (click)="onBack()">
-      <mat-icon>arrow_back</mat-icon> Back
+      <mat-icon>arrow_back</mat-icon> Nazad
     </button>
 
     <!-- Edit and Delete Buttons (Visible only if agent owns the property) -->
     <div *ngIf="agentIsAuthenticated && agentId == sellProp.agent" class="action-button-group">
       <a mat-raised-button color="primary" [routerLink]="['/sell-prop-edit', sellProp._id]" (click)="$event.stopPropagation()">
-        <mat-icon>edit</mat-icon> Edit
+        <mat-icon>edit</mat-icon> Uredi
       </a>
 
       <button mat-raised-button color="warn" (click)="onDelete(sellProp._id); $event.stopPropagation();">
-        <mat-icon>delete</mat-icon> Delete
+        <mat-icon>delete</mat-icon> Ukloni
       </button>
     </div>
   </mat-card-actions>

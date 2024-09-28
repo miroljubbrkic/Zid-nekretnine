@@ -31,34 +31,90 @@ const storage = multer.diskStorage({
 })
 
 
+// router.get('/', (req, res, next) => {
+//     const pageSize = +req.query.pagesize
+//     const currentPage = +req.query.page
+//     const propQuery = SellProp.find()
+//     let fetchedProps
+
+//     if (pageSize && currentPage) {
+//         propQuery.skip(pageSize * (currentPage - 1)).limit(pageSize)
+//     }
+
+//     propQuery
+//     .then(documents => {
+//         fetchedProps = documents
+//         return SellProp.countDocuments()
+//     })
+//     .then(count => {
+//         res.status(200).json({
+//             message: 'Properties fetched!',
+//             sellPorps: fetchedProps,
+//             maxProps: count
+//         })
+//     })
+//     .catch(error => {
+//         res.status(500).json({
+//             message: 'Neuspešno dobavljanje oglasa!'
+//         })
+//     })
+// })
+
 router.get('/', (req, res, next) => {
-    const pageSize = +req.query.pagesize
-    const currentPage = +req.query.page
-    const propQuery = SellProp.find()
-    let fetchedProps
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const minCena = +req.query.minCena;
+    const maxCena = +req.query.maxCena;
+    const minPovrsina = +req.query.minPovrsina;
+    const maxPovrsina = +req.query.maxPovrsina;
+    const struktura = req.query.struktura;
+
+    let query = {};
+
+    // Build the query object based on the filters
+    if (minCena || maxCena) {
+        query.cenaKvadrata = {};
+        if (minCena) query.cenaKvadrata.$gte = minCena;
+        if (maxCena) query.cenaKvadrata.$lte = maxCena;
+    }
+
+    if (minPovrsina || maxPovrsina) {
+        query.povrsina = {};
+        if (minPovrsina) query.povrsina.$gte = minPovrsina;
+        if (maxPovrsina) query.povrsina.$lte = maxPovrsina;
+    }
+
+    if (struktura) {
+        query.struktura = struktura; // Add struktura to the query if provided
+    }
+
+    const propQuery = SellProp.find(query); // Use the query object
+
+    let fetchedProps;
 
     if (pageSize && currentPage) {
-        propQuery.skip(pageSize * (currentPage - 1)).limit(pageSize)
+        propQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
     }
 
     propQuery
-    .then(documents => {
-        fetchedProps = documents
-        return SellProp.countDocuments()
-    })
-    .then(count => {
-        res.status(200).json({
-            message: 'Properties fetched!',
-            sellPorps: fetchedProps,
-            maxProps: count
+        .then(documents => {
+            fetchedProps = documents;
+            return SellProp.countDocuments(query); // Count documents based on the same query
         })
-    })
-    .catch(error => {
-        res.status(500).json({
-            message: 'Neuspešno dobavljanje oglasa!'
+        .then(count => {
+            res.status(200).json({
+                message: 'Properties fetched!',
+                sellPorps: fetchedProps,
+                maxProps: count
+            });
         })
-    })
-})
+        .catch(error => {
+            res.status(500).json({
+                message: 'Neuspešno dobavljanje oglasa!'
+            });
+        });
+});
+
 
 const upload = multer({storage: storage})
 

@@ -4,7 +4,7 @@ import { max, Subscription } from 'rxjs';
 import { SellPropService } from '../sell-prop.service';
 import { PageEvent } from '@angular/material/paginator';
 import { AuthService } from 'src/app/auth/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Params, Router } from '@angular/router';
 
 @Component({
   selector: 'app-sell-prop-list',
@@ -24,6 +24,12 @@ export class SellPropListComponent {
   private sellPropSub!: Subscription
   private authStatusSub!: Subscription
 
+  minCenaKvadrata!: number | null;
+  maxCenaKvadrata!: number | null;
+  minPovrsina!: number | null;
+  maxPovrsina!: number | null;
+  selectedStruktura!: string | null
+
 
   tipovi = [
     { value: '1', name: 'Stan' },
@@ -39,34 +45,103 @@ export class SellPropListComponent {
     { value: '5', name: 'Petosoban' }
   ]
 
-  constructor(public sellPropService: SellPropService, private authService: AuthService, private router: Router) {}
+  constructor(
+    public sellPropService: SellPropService, 
+    private authService: AuthService, 
+    private router: Router,
+    private route: ActivatedRoute
+  ) {}
   
   
   ngOnInit(): void {
-    this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
-    this.agentId = this.authService.getAgentId()
-    this.isLoading = true
+    // Subscribe to query params to get initial filter values
+    this.route.queryParams.subscribe((params: Params) => {
+      this.minCenaKvadrata = params['minCena'] || null;
+      this.maxCenaKvadrata = params['maxCena'] || null;
+      this.minPovrsina = params['minPovrsina'] || null;
+      this.maxPovrsina = params['maxPovrsina'] || null;
+      this.selectedStruktura = params['struktura'] || null;
+      this.currentPage = +params['page'] || this.currentPage;
+      this.propsPerPage = +params['pageSize'] || this.propsPerPage;
+      
+      this.getSellProps();
+    });
+
+    this.agentId = this.authService.getAgentId();
+    this.isLoading = true;
     this.sellPropSub = this.sellPropService.getSellPropUpdateListener().subscribe((sellPropData: {sellProps: SellProp[], sellPropsCount: number}) => {
-      this.isLoading = false
-      this.totalProps = sellPropData.sellPropsCount
-      this.sellProps = sellPropData.sellProps
-    })
-    this.agentIsAuthenticated = this.authService.getIsAuthenticated()
+      this.isLoading = false;
+      this.totalProps = sellPropData.sellPropsCount;
+      this.sellProps = sellPropData.sellProps;
+    });
+    this.agentIsAuthenticated = this.authService.getIsAuthenticated();
     this.authStatusSub = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
-      this.agentIsAuthenticated = isAuthenticated
-      this.agentId = this.authService.getAgentId()
-    })
+      this.agentIsAuthenticated = isAuthenticated;
+      this.agentId = this.authService.getAgentId();
+    });
   }
+
+  getSellProps() {
+    this.isLoading = true;
+    this.sellPropService.getSellProps(
+      this.propsPerPage, 
+      this.currentPage, 
+      this.minCenaKvadrata, 
+      this.maxCenaKvadrata,
+      this.minPovrsina,
+      this.maxPovrsina,
+      this.selectedStruktura
+    );
+  }
+
+  onSearch() {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        minCena: this.minCenaKvadrata,
+        maxCena: this.maxCenaKvadrata,
+        minPovrsina: this.minPovrsina,
+        maxPovrsina: this.maxPovrsina,
+        struktura: this.selectedStruktura,
+        page: 1, // Reset to first page when new search is performed
+        pageSize: this.propsPerPage
+      },
+      queryParamsHandling: 'merge'
+    });
+  }
+
+  onReset() {
+    this.minCenaKvadrata = null;
+    this.maxCenaKvadrata = null;
+    this.minPovrsina = null;
+    this.maxPovrsina = null;
+    this.selectedStruktura = null;
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {},
+      queryParamsHandling: 'merge'
+    });
+  }
+
+
 
   onCardClick(propId: string) {
     this.router.navigate(['/sell-prop', propId]);
   }
 
   onChangePage(pageData: PageEvent) {
-    this.isLoading = true
-    this.currentPage = pageData.pageIndex + 1
-    this.propsPerPage = pageData.pageSize
-    this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        page: pageData.pageIndex + 1,
+        pageSize: pageData.pageSize,
+        minCena: this.minCenaKvadrata,
+        maxCena: this.maxCenaKvadrata,
+        minPovrsina: this.minPovrsina,
+        maxPovrsina: this.maxPovrsina
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
   getTip(value: string): string {
@@ -79,18 +154,32 @@ export class SellPropListComponent {
     return struktura ? struktura.name : value; // Return the name if found, otherwise return the value
   }
 
+  // onDelete(id: string) {
+  //   this.isLoading = true
+  //   this.sellPropService.deleteSellProp(id).subscribe(() => {
+  //     this.totalProps --
+  //     const maxPage = Math.ceil(this.totalProps/this.propsPerPage)
+  //     if (this.currentPage > maxPage) {
+  //       this.currentPage = maxPage > 0 ? maxPage : 1
+  //     }
+  //     this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
+  //   }, () => {
+  //     this.isLoading = false
+  //   })
+  // }
+
   onDelete(id: string) {
-    this.isLoading = true
+    this.isLoading = true;
     this.sellPropService.deleteSellProp(id).subscribe(() => {
-      this.totalProps --
-      const maxPage = Math.ceil(this.totalProps/this.propsPerPage)
+      this.totalProps--;
+      const maxPage = Math.ceil(this.totalProps / this.propsPerPage);
       if (this.currentPage > maxPage) {
-        this.currentPage = maxPage > 0 ? maxPage : 1
+        this.currentPage = maxPage > 0 ? maxPage : 1;
       }
-      this.sellPropService.getSellProps(this.propsPerPage, this.currentPage)
+      this.getSellProps();
     }, () => {
-      this.isLoading = false
-    })
+      this.isLoading = false;
+    });
   }
 
   ngOnDestroy(): void {

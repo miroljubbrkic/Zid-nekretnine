@@ -1,4 +1,11 @@
 <mat-card class="login-card">
+
+  <mat-card-header>
+    <mat-card-title>
+      <h1>Prijava</h1> <!-- Add the h1 heading for login -->
+    </mat-card-title>
+  </mat-card-header>
+  
     <mat-spinner *ngIf="isLoading"></mat-spinner>
     <form (submit)="onLogin(loginForm)" #loginForm="ngForm" *ngIf="!isLoading">
       

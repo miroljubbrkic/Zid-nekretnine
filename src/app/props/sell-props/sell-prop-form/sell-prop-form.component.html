@@ -1,83 +1,87 @@
 <mat-card class="sell-prop-form-card">
-    <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
-  
-    <form [formGroup]="form" (submit)="onSaveProp()" *ngIf="!isLoading">
-      <!-- Tip -->
-      <mat-form-field appearance="outline">
-        <mat-label>Tip</mat-label>
-        <mat-select formControlName="tip">
-          <mat-option *ngFor="let tip of tipovi" [value]="tip.value">
-            {{ tip.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-  
-      <!-- Povrsina -->
-      <mat-form-field appearance="outline">
-        <mat-label>Površina</mat-label>
-        <input matInput type="number" formControlName="povrsina" placeholder="Površina (m²)">
-      </mat-form-field>
-  
-      <!-- Cena po kvadratu -->
-      <mat-form-field appearance="outline">
-        <mat-label>Cena po kvadratu</mat-label>
-        <input matInput type="number" formControlName="cenaKvadrata" placeholder="Cena po kvadratu (€)">
-      </mat-form-field>
-  
-      <!-- Struktura -->
-      <mat-form-field appearance="outline">
-        <mat-label>Struktura</mat-label>
-        <mat-select formControlName="struktura">
-          <mat-option *ngFor="let struktura of strukture" [value]="struktura.value">
-            {{ struktura.name }}
-          </mat-option>
-        </mat-select>
-      </mat-form-field>
-  
-      <!-- Sprat -->
-      <mat-form-field appearance="outline">
-        <mat-label>Sprat</mat-label>
-        <input matInput type="number" formControlName="sprat" placeholder="Sprat">
-      </mat-form-field>
-  
-      <!-- Broj spavaćih soba -->
-      <mat-form-field appearance="outline">
-        <mat-label>Broj spavaćih soba</mat-label>
-        <input matInput type="number" formControlName="brojSpavacihSoba" placeholder="Broj spavaćih soba">
-      </mat-form-field>
-  
-      <!-- Image Picker Button -->
-      <div class="image-picker">
-        <button mat-stroked-button type="button" (click)="imgPicker.click()">Izaberite slike</button>
-        <input type="file" #imgPicker (change)="onImagePicked($event)" multiple>
-      </div>
-  
-      <!-- Image Previews -->
-      <div *ngIf="imgPreviews && imgPreviews.length > 0" class="image-previews">
-        <mat-grid-list cols="3" rowHeight="200px" gutterSize="16px">
-          <mat-grid-tile *ngFor="let img of imgPreviews; let i = index">
-            <mat-card class="image-card">
-              <button mat-icon-button color="warn" class="delete-button" (click)="onDeleteImage(i)">
-                <mat-icon>delete</mat-icon>
-              </button>
-              <img mat-card-image [src]="img" [alt]="form.value.povrsina + ' ' + form.value.opis">
-            </mat-card>
-          </mat-grid-tile>
-        </mat-grid-list>
-      </div>
-  
-      <!-- Opis -->
-      <mat-form-field appearance="outline">
-        <mat-label>Opis</mat-label>
-        <textarea 
-          matInput 
-          rows="4" 
-          formControlName="opis"
-          placeholder="Opis"></textarea>
-      </mat-form-field>
-  
+  <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
+
+  <form [formGroup]="form" (submit)="onSaveProp()" *ngIf="!isLoading">
+    <!-- Tip -->
+    <mat-form-field appearance="outline">
+      <mat-label>Tip</mat-label>
+      <mat-select formControlName="tip">
+        <mat-option *ngFor="let tip of tipovi" [value]="tip.value">
+          {{ tip.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Povrsina -->
+    <mat-form-field appearance="outline">
+      <mat-label>Površina</mat-label>
+      <input matInput type="number" formControlName="povrsina" placeholder="Površina (m²)">
+    </mat-form-field>
+
+    <!-- Cena po kvadratu -->
+    <mat-form-field appearance="outline">
+      <mat-label>Cena po kvadratu</mat-label>
+      <input matInput type="number" formControlName="cenaKvadrata" placeholder="Cena po kvadratu (€)">
+    </mat-form-field>
+
+    <!-- Struktura -->
+    <mat-form-field appearance="outline">
+      <mat-label>Struktura</mat-label>
+      <mat-select formControlName="struktura">
+        <mat-option *ngFor="let struktura of strukture" [value]="struktura.value">
+          {{ struktura.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Sprat -->
+    <mat-form-field appearance="outline">
+      <mat-label>Sprat</mat-label>
+      <input matInput type="number" formControlName="sprat" placeholder="Sprat">
+    </mat-form-field>
+
+    <!-- Broj spavaćih soba -->
+    <mat-form-field appearance="outline">
+      <mat-label>Broj spavaćih soba</mat-label>
+      <input matInput type="number" formControlName="brojSpavacihSoba" placeholder="Broj spavaćih soba">
+    </mat-form-field>
+
+    <!-- Image Picker Button -->
+    <div class="image-picker">
+      <button mat-stroked-button type="button" (click)="imgPicker.click()">Izaberite slike</button>
+      <input type="file" #imgPicker (change)="onImagePicked($event)" multiple>
+    </div>
+
+    <!-- Image Previews -->
+    <div *ngIf="imgPreviews && imgPreviews.length > 0" class="image-previews">
+      <mat-grid-list cols="3" rowHeight="200px" gutterSize="16px">
+        <mat-grid-tile *ngFor="let img of imgPreviews; let i = index">
+          <mat-card class="image-card">
+            <button mat-icon-button color="warn" class="delete-button" (click)="onDeleteImage(i)">
+              <mat-icon>delete</mat-icon>
+            </button>
+            <img mat-card-image [src]="img" [alt]="form.value.povrsina + ' ' + form.value.opis">
+          </mat-card>
+        </mat-grid-tile>
+      </mat-grid-list>
+    </div>
+
+    <!-- Opis -->
+    <mat-form-field appearance="outline">
+      <mat-label>Opis</mat-label>
+      <textarea 
+        matInput 
+        rows="4" 
+        formControlName="opis"
+        placeholder="Opis"></textarea>
+    </mat-form-field>
+
+    <div class="button-container">
+      <!-- Cancel Button -->
+      <button mat-raised-button color="warn" type="button" (click)="onCancel()" class="cancel-button">Otkaži</button>
+      
       <!-- Save Button -->
       <button mat-raised-button color="primary" type="submit" class="save-button">Sačuvaj</button>
-    </form>
-  </mat-card>
-  
+    </div>
+  </form>
+</mat-card>

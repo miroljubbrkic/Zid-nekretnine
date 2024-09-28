@@ -1,8 +1,17 @@
-
-<h1 mat-dialog-title>Greška</h1> 
-<div mat-dialog-content>
-    <p class="mat-body-1">{{ data.message }}</p>
-</div>
-<div mat-dialog-actions>
-    <button mat-button mat-dialog-close>U redu</button>
-</div>
+<!-- Error Dialog Template -->
+<mat-card class="error-dialog-card">
+    <mat-card-header class="error-header">
+      <mat-card-title>
+        Greška
+      </mat-card-title>
+    </mat-card-header>
+  
+    <mat-card-content class="error-content">
+      <p class="mat-body-1">{{ data.message }}</p>
+    </mat-card-content>
+  
+    <mat-card-actions class="error-actions">
+      <button mat-raised-button color="warn" mat-dialog-close>U redu</button>
+    </mat-card-actions>
+  </mat-card>
+  

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SellProp } from './sell-prop.model';
-import { Subject } from 'rxjs';
+import { min, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 
@@ -18,15 +18,55 @@ export class SellPropService {
     return this.sellPropsUpdated.asObservable()
   }
 
-  getSellProps(propsPerPage: number, currentPage: number) {
-    const queryParams = `?pagesize=${propsPerPage}&page=${currentPage}`
-    this.http.get<{message: string, sellPorps: SellProp[], maxProps: number}>('http://localhost:3000/zid/sell-props'+queryParams)
+  // getSellProps(propsPerPage: number, currentPage: number) {
+  //   const queryParams = `?pagesize=${propsPerPage}&page=${currentPage}`
+  //   this.http.get<{message: string, sellPorps: SellProp[], maxProps: number}>('http://localhost:3000/zid/sell-props'+queryParams)
+  //     .subscribe((responseData) => {
+  //       console.log(responseData);
+  //       this.sellProps = responseData.sellPorps
+  //       this.sellPropsUpdated.next({sellProps: [...this.sellProps], sellPropsCount: responseData.maxProps})
+  //     })
+  // }
+
+  getSellProps(
+    propsPerPage: number | null,
+    currentPage: number | null,
+    minCenaKvadrata?: number | null,
+    maxCenaKvadrata?: number | null,
+    minPovrsina?: number | null,
+    maxPovrsina?: number | null,
+    struktura?: string | null
+  ) {
+    let queryParams = `?pagesize=${propsPerPage}&page=${currentPage}`;
+
+    if (minCenaKvadrata !== undefined && minCenaKvadrata !== null) {
+      queryParams += `&minCena=${minCenaKvadrata}`;
+    }
+    if (maxCenaKvadrata !== undefined && maxCenaKvadrata !== null) {
+      queryParams += `&maxCena=${maxCenaKvadrata}`;
+    }
+    if (minPovrsina !== undefined && minPovrsina !== null) {
+      queryParams += `&minPovrsina=${minPovrsina}`;
+    }
+    if (maxPovrsina !== undefined && maxPovrsina !== null) {
+      queryParams += `&maxPovrsina=${maxPovrsina}`;
+    }
+    if (struktura) {
+      queryParams += `&struktura=${struktura}`;
+    }
+
+    this.http
+      .get<{ message: string, sellPorps: SellProp[], maxProps: number }>('http://localhost:3000/zid/sell-props' + queryParams)
       .subscribe((responseData) => {
-        console.log(responseData);
-        this.sellProps = responseData.sellPorps
-        this.sellPropsUpdated.next({sellProps: [...this.sellProps], sellPropsCount: responseData.maxProps})
-      })
+        this.sellProps = responseData.sellPorps;
+        this.sellPropsUpdated.next({
+          sellProps: [...this.sellProps],
+          sellPropsCount: responseData.maxProps
+        });
+      });
   }
+  
+  
 
   getSellProp(id: string) {
     return this.http.get<{sellProp:SellProp}>('http://localhost:3000/zid/sell-props/' + id)

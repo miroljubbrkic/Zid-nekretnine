@@ -7,6 +7,7 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { SellProp } from '../sell-prop.model';
 import { Subscription } from "rxjs";
 import { AuthService } from "src/app/auth/auth.service";
+import { Location } from "@angular/common";
 
 @Component({
   selector: 'app-sell-prop-form',
@@ -47,7 +48,12 @@ export class SellPropFormComponent implements OnInit, OnDestroy {
   private sellProp!: SellProp
   private authStatusSub!: Subscription
   
-  constructor (public sellPropService: SellPropService, public route: ActivatedRoute, private authService: AuthService) {}
+  constructor (
+    public sellPropService: SellPropService, 
+    public route: ActivatedRoute, 
+    private authService: AuthService,
+    private location: Location
+  ) {}
   
 
 
@@ -241,6 +247,10 @@ export class SellPropFormComponent implements OnInit, OnDestroy {
 
     this.form.reset()
     
+  }
+
+  onCancel(): void {
+    this.location.back(); // Navigate back to the previous page
   }
 
   ngOnDestroy(): void {
