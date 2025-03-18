@@ -2,6 +2,8 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
+
+const checkAuth = require('../middleware/check-auth')
 const Agent = require('../models/agent')
 
 
@@ -48,7 +50,7 @@ router.post('/login', (req, res, next) => {
         .then(agent => {
             if (!agent) {
                 return res.status(401).json({
-                    message: 'Prijava neuspela!'
+                    message: 'Prijava neuspešna!'
                 })
             }
 
@@ -87,19 +89,14 @@ router.post('/login', (req, res, next) => {
 })
 
 
+// Fetch agent by ID
 router.get('/:id', (req, res, next) => {
-    const agentId = req.params.id;
-    
-    Agent.findById(agentId)
+    Agent.findById(req.params.id)
       .then(agent => {
         if (agent) {
           res.status(200).json({
             message: 'Agent details fetched successfully',
-            agent: {
-              ime: agent.ime,
-              prezime: agent.prezime,
-              telefon: agent.telefon
-            }
+            agent: agent
           });
         } else {
           res.status(404).json({ message: 'Agent not found' });
@@ -113,7 +110,30 @@ router.get('/:id', (req, res, next) => {
       });
   });
   
+router.put('/:id', checkAuth, (req, res, next) => {
+    const agentId = req.params.id;
+    const updatedAgentData = {
+        ime: req.body.ime,
+        prezime: req.body.prezime,
+        email: req.body.email,
+        telefon: req.body.telefon,
+    };
 
+    Agent.updateOne({ _id: agentId, _id: req.agentData.agentId }, updatedAgentData)
+        .then((result) => {
+            if (result.matchedCount > 0) {
+                res.status(200).json({ message: 'Agent updated successfully!' });
+            } else {
+                res.status(401).json({ message: 'Not authorized!' });
+            }
+            })
+        .catch((error) => {
+            res.status(500).json({
+                message: 'Failed to update agent!',
+                error: error,
+            });
+        });
+});
 
 
 module.exports = router

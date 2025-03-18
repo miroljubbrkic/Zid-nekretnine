@@ -34,8 +34,8 @@ export class AuthService {
     return this.authStatusListener.asObservable()
   }
 
-  getAgentById(agentId: string): Observable<{ message: string, agent: { ime: string, prezime: string, telefon: string } }> {
-    return this.http.get<{ message: string, agent: { ime: string, prezime: string, telefon: string } }>(
+  getAgentById(agentId: string): Observable<{ message: string, agent: { ime: string, prezime: string, email: string, telefon: string } }> {
+    return this.http.get<{ message: string, agent: { ime: string, prezime: string, email: string, telefon: string } }>(
       `http://localhost:3000/zid/agents/${agentId}`
     );
   }
@@ -50,10 +50,9 @@ export class AuthService {
       prezime: prezime, 
       telefon: telefon
     }
-    console.log(agent);
     this.http.post('http://localhost:3000/zid/agents/signup', agent)
       .subscribe(() => {
-        this.router.navigate(['/login'])
+        this.router.navigate(['/prijava'])
       }, error => {
         this.authStatusListener.next(false)
       })
@@ -85,11 +84,23 @@ export class AuthService {
           
 
           this.saveAuthData(token, expirationDate, this.agentId)
-          this.router.navigate(['/sell-prop-list'])
+          this.router.navigate(['/'])
         }
       }, error => {
         this.authStatusListener.next(false)
       })
+  }
+
+  updateAgent(agentId: string, ime: string, prezime: string, email: string, telefon: string) {
+    const updatedAgent = { ime, prezime, email, telefon };
+  
+    return this.http.put(`http://localhost:3000/zid/agents/${agentId}`, updatedAgent)
+      .subscribe(response => {
+        console.log(response);
+        this.router.navigate(['/']);
+      }, error => {
+        console.error('Failed to update agent:', error);
+      });
   }
 
   autoAuthUser() {
@@ -115,7 +126,7 @@ export class AuthService {
     clearTimeout(this.tokenTimer)
     this.clearAuthData()
     this.agentId = null
-    this.router.navigate(['/sell-prop-list'])
+    this.router.navigate(['/'])
 
   }
 

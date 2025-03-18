@@ -1,5 +1,3 @@
-import { validateImage } from "image-validator";
-
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { SellPropService } from '../sell-prop.service';
@@ -7,7 +5,8 @@ import { ActivatedRoute, ParamMap } from '@angular/router';
 import { SellProp } from '../sell-prop.model';
 import { Subscription } from "rxjs";
 import { AuthService } from "src/app/auth/auth.service";
-import { Location } from "@angular/common";
+import { Location } from '@angular/common';
+import { validateImage } from 'image-validator';
 
 @Component({
   selector: 'app-sell-prop-form',
@@ -16,108 +15,125 @@ import { Location } from "@angular/common";
 })
 export class SellPropFormComponent implements OnInit, OnDestroy {
   tipovi = [
-    { value: '1', name: 'Stan' },
-    { value: '2', name: 'Kuca' },
-    { value: '3', name: 'Poslovni prostor' }
-  ]
+    { value: 'Stan', name: 'Stan' },
+    { value: 'Kuca', name: 'Kuca' },
+    { value: 'Poslovni prostor', name: 'Poslovni prostor' }
+  ];
 
   strukture = [
-    { value: '1', name: 'Garsonjera' },
-    { value: '2', name: 'Dvosoban' },
-    { value: '3', name: 'Trosoban' },
-    { value: '4', name: 'Cetvorosoban' },
-    { value: '5', name: 'Petosoban' }
-  ]
+    { value: 'Garsonjera', name: 'Garsonjera' },
+    { value: 'Dvosoban', name: 'Dvosoban' },
+    { value: 'Trosoban', name: 'Trosoban' },
+    { value: 'Četvorosoban', name: 'Četvorosoban' },
+    { value: 'Petosoban', name: 'Petosoban' }
+  ];
 
-  tip = ''
-  povrsina = ''
-  cenaKvadrata = ''
-  struktura = ''
-  sprat = ''
-  brojSpavacihSoba = ''
-  opis = ''
-  isLoading = false
+  grejanje = [
+    { value: 'centralno', name: 'Centralno' },
+    { value: 'etazno', name: 'Etažno' },
+    { value: 'podno', name: 'Podno' },
+    { value: 'ta_pec', name: 'TA peć' },
+    { value: 'struja', name: 'Struja' }
+  ];
 
-  form!: FormGroup
-  imgPreviews: string[] = []
-  oldImgs: string[] =[]
-  newImgs: string[] =[]
+  form!: FormGroup;
+  imgPreviews: string[] = [];
+  oldImgs: string[] = [];
+  newImgs: File[] = [];
+  private mode = 'create';
+  private propId!: string | null;
+  private sellProp!: SellProp;
+  isLoading = false;
+  private authStatusSub!: Subscription;
 
-  private mode = 'create'
-  private propId!: any
-  private sellProp!: SellProp
-  private authStatusSub!: Subscription
-  
-  constructor (
+  constructor(
     public sellPropService: SellPropService, 
     public route: ActivatedRoute, 
     private authService: AuthService,
     private location: Location
   ) {}
-  
-
 
   ngOnInit(): void {
-    this.authStatusSub = this.authService.getAuthStatusListener().subscribe(authStatus => {
-      this.isLoading = false
-    })
+    this.authStatusSub = this.authService.getAuthStatusListener().subscribe(() => {
+      this.isLoading = false;
+    });
 
     this.form = new FormGroup({
-      'tip': new FormControl(null, {validators: [Validators.required]}),
-      'povrsina': new FormControl(null, {validators: [Validators.required]}),
-      'cenaKvadrata': new FormControl(null, {validators: [Validators.required]}),
-      'struktura': new FormControl(null, {validators: [Validators.required]}),
-      'sprat': new FormControl(null, {validators: [Validators.required]}),
-      'brojSpavacihSoba': new FormControl(null, {validators: [Validators.required]}),
+      'naslov': new FormControl(null, { validators: [Validators.required] }),
+      'tip': new FormControl(null, { validators: [Validators.required] }),
+      'struktura': new FormControl(null, { validators: [Validators.required] }),
+      'grad': new FormControl(null, { validators: [Validators.required] }),
+      'naselje': new FormControl(null, { validators: [Validators.required] }),
+      'adresa': new FormControl(null, { validators: [Validators.required] }),
+      'povrsina': new FormControl(null, { validators: [Validators.required] }),
+      'cena': new FormControl(null, { validators: [Validators.required] }),
+      'spratovi': new FormControl(null, { validators: [Validators.required] }),
+      'sprat': new FormControl(null, { validators: [Validators.required] }),
+      'lift': new FormControl(null, { validators: [Validators.required] }),
+      'grejanje': new FormControl(null, { validators: [Validators.required] }),
+      'namestenost': new FormControl(null, { validators: [Validators.required] }),
+      'uknjizenost': new FormControl(null, { validators: [Validators.required] }),
       'slike': new FormControl(null),
-      'opis': new FormControl(null, {validators: [Validators.required]})
-    })
+      'opis': new FormControl(null, { validators: [Validators.required] })
+    });
 
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('propId')) {
-        this.mode = 'edit'
-        this.propId = paramMap.get('propId')
-        this.isLoading = true
-        this.sellPropService.getSellProp(this.propId).subscribe(propData => {
-          this.isLoading = false
-          this.sellProp = {
-            _id: propData.sellProp._id,
-            tip: propData.sellProp.tip,
-            povrsina: propData.sellProp.povrsina,
-            cenaKvadrata: propData.sellProp.cenaKvadrata,
-            struktura: propData.sellProp.struktura,
-            sprat: propData.sellProp.sprat,
-            brojSpavacihSoba: propData.sellProp.brojSpavacihSoba,
-            slike: propData.sellProp.slike,
-            opis: propData.sellProp.opis,
-            agent: propData.sellProp.agent
-          }
+        this.mode = 'edit';
+        this.propId = paramMap.get('propId');
+        this.isLoading = true;
+        this.sellPropService.getSellProp(this.propId!).subscribe(propData => {
+          this.isLoading = false;
+          this.sellProp = propData.sellProp;
           this.form.setValue({
+            'naslov': this.sellProp.naslov,
             'tip': this.sellProp.tip,
-            'povrsina': this.sellProp.povrsina,
-            'cenaKvadrata': this.sellProp.cenaKvadrata,
             'struktura': this.sellProp.struktura,
+            'grad': this.sellProp.grad,
+            'naselje': this.sellProp.naselje,
+            'adresa': this.sellProp.adresa,
+            'povrsina': this.sellProp.povrsina,
+            'cena': this.sellProp.cena,
+            'spratovi': this.sellProp.spratovi,
             'sprat': this.sellProp.sprat,
-            'brojSpavacihSoba': this.sellProp.brojSpavacihSoba,
+            'lift': this.sellProp.lift,
+            'grejanje': this.sellProp.grejanje,
+            'namestenost': this.sellProp.namestenost,
+            'uknjizenost': this.sellProp.uknjizenost,
             'slike': null,
             'opis': this.sellProp.opis
-          })
+          });
 
           if (this.sellProp.slike && this.sellProp.slike.length > 0) {
-            this.oldImgs = [...this.sellProp.slike]
-            this.imgPreviews = [...this.sellProp.slike]
+            this.oldImgs = [...this.sellProp.slike];
+            this.imgPreviews = [...this.sellProp.slike];
           }
-        })
-    } else {
-        this.mode = 'create'
-        this.propId = null
+        });
+      } else {
+        this.mode = 'create';
+        this.propId = null;
       }
-    })
-
-
-    
+    });
   }
 
+  // async onImagePicked(event: Event): Promise<void> {
+  //   const files = (event.target as HTMLInputElement).files;
+  //   if (!files || files.length === 0) return;
+
+  //   const currentImages = this.form.get('slike')?.value || [];
+  //   const newImages = Array.from(files);
+
+  //   this.form.patchValue({ 'slike': [...currentImages, ...newImages] });
+  //   this.form.get('slike')?.updateValueAndValidity();
+
+  //   Array.from(files).forEach((file) => {
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       this.imgPreviews.push(reader.result as string);
+  //     };
+  //     reader.readAsDataURL(file);
+  //   });
+  // }
 
   // Function to validate multiple images
   async validateMultipleImages(files: FileList): Promise<boolean> {
@@ -163,55 +179,50 @@ export class SellPropFormComponent implements OnInit, OnDestroy {
     }
   }
 
+
+
+
+
   onDeleteImage(index: number): void {
-    // Check if the index corresponds to an old image
     if (index < this.oldImgs.length) {
-      // Remove the image from old images and imgPreviews
       this.oldImgs.splice(index, 1);
       this.imgPreviews.splice(index, 1);
-      console.log('Old image deleted from both oldImgs and imgPreviews.');
     } else {
-      // The index corresponds to a new image stored in the form data
-      const newImageIndex = index - this.oldImgs.length; // Adjust index for new images
-  
-      // Remove the image preview of new images
+      const newImageIndex = index - this.oldImgs.length;
       this.imgPreviews.splice(index, 1);
-  
-      // Remove the corresponding file from the form control value
       const currentFiles = this.form.get('slike')?.value || [];
-      currentFiles.splice(newImageIndex, 1); // Remove the file at newImageIndex
+      currentFiles.splice(newImageIndex, 1);
       this.form.patchValue({ 'slike': currentFiles });
-      console.log('New image deleted from form data.');
     }
-  
-    // Update form control validity
     this.form.get('slike')?.updateValueAndValidity();
-    console.log('Image deleted and form updated.');
   }
-  
 
+  onSaveProp(): void {
+    if (this.form.invalid) return;
 
-  onSaveProp() {
-    if (this.form.invalid) {
-      return
-    }
-    this.isLoading = true
+    this.isLoading = true;
 
     const formData = new FormData();
+    formData.append('naslov', this.form.value.naslov);
     formData.append('tip', this.form.value.tip);
-    formData.append('povrsina', this.form.value.povrsina.toString());
-    formData.append('cenaKvadrata', this.form.value.cenaKvadrata.toString());
     formData.append('struktura', this.form.value.struktura);
+    formData.append('grad', this.form.value.grad);
+    formData.append('naselje', this.form.value.naselje);
+    formData.append('adresa', this.form.value.adresa);
+    formData.append('povrsina', this.form.value.povrsina.toString());
+    formData.append('cena', this.form.value.cena.toString());
+    formData.append('spratovi', this.form.value.spratovi.toString());
     formData.append('sprat', this.form.value.sprat.toString());
-    formData.append('brojSpavacihSoba', this.form.value.brojSpavacihSoba.toString());
+    formData.append('lift', this.form.value.lift);
+    formData.append('grejanje', this.form.value.grejanje.toString());
+    formData.append('namestenost', this.form.value.namestenost);
+    formData.append('uknjizenost', this.form.value.uknjizenost);
     formData.append('opis', this.form.value.opis);
 
-    // Append old images (URLs) to FormData
     this.oldImgs.forEach((imageUrl) => {
       formData.append('existingImages', imageUrl);
     });
 
-    // Append new image files to FormData (if any)
     if (this.form.value.slike) {
       this.form.value.slike.forEach((file: File) => {
         formData.append('slike', file);
@@ -220,40 +231,57 @@ export class SellPropFormComponent implements OnInit, OnDestroy {
 
     if (this.mode === 'create') {
       this.sellPropService.addSellProp(
+        this.form.value.naslov,
         this.form.value.tip,
-        this.form.value.povrsina,
-        this.form.value.cenaKvadrata,
         this.form.value.struktura,
+        this.form.value.grad,
+        this.form.value.naselje,
+        this.form.value.adresa,
+        this.form.value.povrsina,
+        this.form.value.cena,
+        this.form.value.spratovi,
         this.form.value.sprat,
-        this.form.value.brojSpavacihSoba,
+        this.form.value.lift,
+        this.form.value.grejanje,
+        this.form.value.namestenost,
+        this.form.value.uknjizenost,
         this.form.value.slike,
         this.form.value.opis
-      )
+      );
     } else {
       this.sellPropService.updateSellProp(
-        this.propId, 
+        this.propId!,
+        this.form.value.naslov,
         this.form.value.tip,
-        this.form.value.povrsina,
-        this.form.value.cenaKvadrata,
         this.form.value.struktura,
+        this.form.value.grad,
+        this.form.value.naselje,
+        this.form.value.adresa,
+        this.form.value.povrsina,
+        this.form.value.cena,
+        this.form.value.spratovi,
         this.form.value.sprat,
-        this.form.value.brojSpavacihSoba,
+        this.form.value.lift,
+        this.form.value.grejanje,
+        this.form.value.namestenost,
+        this.form.value.uknjizenost,
         {
           oldImages: this.oldImgs,
-          newImages: this.form.value.slike? this.form.value.slike : []
-        }, // Combined object with old and new images
-        this.form.value.opis)
+          newImages: this.form.value.slike ? this.form.value.slike : []
+        },
+        this.form.value.opis
+      );
     }
 
-    this.form.reset()
-    
+    this.form.reset();
+    this.isLoading = false;
   }
 
   onCancel(): void {
-    this.location.back(); // Navigate back to the previous page
+    this.location.back();
   }
 
   ngOnDestroy(): void {
-    this.authStatusSub.unsubscribe()
+    this.authStatusSub.unsubscribe();
   }
 }

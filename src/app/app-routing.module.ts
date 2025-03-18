@@ -6,14 +6,19 @@ import { LoginComponent } from './auth/login/login.component';
 import { SignupComponent } from './auth/signup/signup.component';
 import { AuthGuard } from './auth/auth-guard';
 import { SellPropDetailComponent } from './props/sell-props/sell-prop-detail/sell-prop-detail.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { AgentFormComponent } from './agents/agent-form/agent-form.component';
 
 const routes: Routes = [
-  {path: 'sell-prop-list', component: SellPropListComponent},
-  {path: 'sell-prop-create', component: SellPropFormComponent, canActivate: [AuthGuard]},
-  {path: 'sell-prop-edit/:propId', component: SellPropFormComponent, canActivate: [AuthGuard]},
-  { path: 'sell-prop/:id', component: SellPropDetailComponent },
-  {path: 'login', component: LoginComponent},
-  {path: 'signup', component: SignupComponent},
+  {path: '', component: LandingPageComponent},
+  {path: 'moji-oglasi', component: SellPropListComponent, canActivate: [AuthGuard]},
+  {path: 'uredi-agenta', component: AgentFormComponent, canActivate: [AuthGuard]},
+  {path: 'oglasi-za-prodaju', component: SellPropListComponent},
+  {path: 'kreiraj-oglas', component: SellPropFormComponent, canActivate: [AuthGuard]},
+  {path: 'oglasi-za-prodaju/izmena/:propId', component: SellPropFormComponent, canActivate: [AuthGuard]},
+  {path: 'oglasi-za-prodaju/:id', component: SellPropDetailComponent},
+  {path: 'prijava', component: LoginComponent},
+  {path: 'registracija', component: SignupComponent},
 ];
 
 @NgModule({

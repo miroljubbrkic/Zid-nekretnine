@@ -1,7 +1,7 @@
-<mat-card class="signup-card">
+<!-- <mat-card class="signup-card">
   <mat-card-header>
     <mat-card-title>
-      <h1>Registracija</h1> <!-- Add the h1 heading for signup -->
+      <h1>Registracija</h1>
     </mat-card-title>
   </mat-card-header>
 
@@ -59,10 +59,10 @@
         #prezimeInput="ngModel"
         required>
       <mat-error *ngIf="prezimeInput.invalid && prezimeInput.touched">Unesite prezime</mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
 
     <!-- Phone Number Field -->
-    <mat-form-field>
+    <!-- <mat-form-field>
       <mat-icon matPrefix>phone</mat-icon>
       <input 
         matInput
@@ -76,17 +76,17 @@
       <mat-error *ngIf="telefonInput.invalid && telefonInput.touched">
         Unesite validan broj telefona u formatu +381641234567 ili 0641234567
       </mat-error>
-    </mat-form-field>
+    </mat-form-field> -->
 
     <!-- Button Container -->
 
-      <button 
+      <!-- <button 
         mat-raised-button 
         color="accent"
         type="submit"
         class="signup-button"
         *ngIf="!isLoading"
-        [disabled]="signupForm.invalid">Registruj se</button>
+        [disabled]="signupForm.invalid">Registruj se</button> -->
 
       <!-- <button
         mat-raised-button
@@ -95,5 +95,118 @@
         (click)="test()">
         Test data
       </button> -->
+  <!-- </form>
+</mat-card> -->
+
+<mat-card class="signup-card">
+  <mat-card-header>
+    <mat-card-title>
+      <h1>Registracija</h1>
+    </mat-card-title>
+  </mat-card-header>
+
+  <mat-spinner *ngIf="isLoading"></mat-spinner>
+  <form #signupForm="ngForm" (ngSubmit)="onSignup(signupForm)" *ngIf="!isLoading">
+    <mat-vertical-stepper>
+
+      <!-- Step 1: Email -->
+      <mat-step [stepControl]="signupForm.controls['email']">
+        <ng-template matStepLabel>Email</ng-template>
+        <mat-form-field>
+          <mat-icon matPrefix>email</mat-icon>
+          <input 
+            matInput 
+            name="email"
+            type="email"
+            placeholder="E-Mail"
+            ngModel
+            #emailInput="ngModel"
+            required
+            email>
+          <mat-error *ngIf="emailInput.invalid && emailInput.touched">Unesite ispravan email</mat-error>
+        </mat-form-field>
+        <button mat-button matStepperNext [disabled]="emailInput.invalid">Sledeće</button>
+      </mat-step>
+
+      <!-- Step 2: Password -->
+      <mat-step [stepControl]="signupForm.controls['lozinka']">
+        <ng-template matStepLabel>Lozinka</ng-template>
+        <mat-form-field>
+          <mat-icon matPrefix>lock</mat-icon>
+          <input 
+            matInput
+            name="lozinka"
+            type="password"
+            placeholder="Lozinka"
+            ngModel
+            #lozinkaInput="ngModel"
+            required>
+          <mat-error *ngIf="lozinkaInput.invalid && lozinkaInput.touched">Unesite lozinku</mat-error>
+        </mat-form-field>
+        <button mat-button matStepperPrevious>Nazad</button>
+        <button mat-button matStepperNext [disabled]="lozinkaInput.invalid">Sledeće</button>
+      </mat-step>
+
+      <!-- Step 3: First Name -->
+      <mat-step [stepControl]="signupForm.controls['ime']">
+        <ng-template matStepLabel>Ime</ng-template>
+        <mat-form-field>
+          <mat-icon matPrefix>person</mat-icon>
+          <input 
+            matInput
+            name="ime"
+            type="text"
+            placeholder="Ime"
+            ngModel
+            #imeInput="ngModel"
+            required>
+          <mat-error *ngIf="imeInput.invalid && imeInput.touched">Unesite ime</mat-error>
+        </mat-form-field>
+        <button mat-button matStepperPrevious>Nazad</button>
+        <button mat-button matStepperNext [disabled]="imeInput.invalid">Sledeće</button>
+      </mat-step>
+
+      <!-- Step 4: Last Name -->
+      <mat-step [stepControl]="signupForm.controls['prezime']">
+        <ng-template matStepLabel>Prezime</ng-template>
+        <mat-form-field>
+          <mat-icon matPrefix>person</mat-icon>
+          <input 
+            matInput
+            name="prezime"
+            type="text"
+            placeholder="Prezime"
+            ngModel
+            #prezimeInput="ngModel"
+            required>
+          <mat-error *ngIf="prezimeInput.invalid && prezimeInput.touched">Unesite prezime</mat-error>
+        </mat-form-field>
+        <button mat-button matStepperPrevious>Nazad</button>
+        <button mat-button matStepperNext [disabled]="prezimeInput.invalid">Sledeće</button>
+      </mat-step>
+
+      <!-- Step 5: Phone Number -->
+      <mat-step [stepControl]="signupForm.controls['telefon']">
+        <ng-template matStepLabel>Telefon</ng-template>
+        <mat-form-field>
+          <mat-icon matPrefix>phone</mat-icon>
+          <input 
+            matInput
+            name="telefon"
+            type="tel"
+            placeholder="Telefon"
+            ngModel
+            #telefonInput="ngModel"
+            required
+            pattern="^(?:\\+381|0)(6[0-689]|1[0-9])[0-9]{6,7}$">
+          <mat-error *ngIf="telefonInput.invalid && telefonInput.touched">
+            Unesite validan broj telefona u formatu +381641234567 ili 0641234567
+          </mat-error>
+        </mat-form-field>
+        <button mat-button matStepperPrevious>Nazad</button>
+        <button mat-raised-button color="accent" type="submit" [disabled]="telefonInput.invalid">Registruj se</button>
+      </mat-step>
+
+    </mat-vertical-stepper>
   </form>
 </mat-card>

@@ -1,0 +1,5 @@
+{
+    "env": {
+        "JWT_KEY": "super_strong_secret"
+    }
+}

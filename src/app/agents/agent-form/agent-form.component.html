@@ -1,0 +1,52 @@
+<mat-card class="agent-edit-card">
+    <mat-spinner *ngIf="isLoading"></mat-spinner>
+  
+    <form [formGroup]="agentForm" (ngSubmit)="onSaveAgent()" *ngIf="!isLoading">
+      <h1>Uredi profil</h1>
+  
+      <!-- <mat-form-field appearance="outline">
+        <mat-label>E-Mail</mat-label>
+        <input matInput formControlName="email" type="email">
+        <mat-error *ngIf="agentForm.get('email')?.invalid && agentForm.get('email')?.touched">
+          Unesite ispravan email
+        </mat-error>
+      </mat-form-field> -->
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Ime</mat-label>
+        <input matInput formControlName="ime" type="text">
+        <mat-error *ngIf="agentForm.get('ime')?.invalid && agentForm.get('ime')?.touched">
+          Unesite ime
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Prezime</mat-label>
+        <input matInput formControlName="prezime" type="text">
+        <mat-error *ngIf="agentForm.get('prezime')?.invalid && agentForm.get('prezime')?.touched">
+          Unesite prezime
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Telefon</mat-label>
+        <input matInput formControlName="telefon" type="text">
+        <mat-error *ngIf="agentForm.get('telefon')?.invalid && agentForm.get('telefon')?.touched">
+          Unesite broj telefona
+        </mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="outline">
+        <mat-label>Lozinka (nije obavezna)</mat-label>
+        <input matInput formControlName="lozinka" type="password">
+        <mat-error *ngIf="agentForm.get('lozinka')?.invalid && agentForm.get('lozinka')?.touched">
+          Lozinka mora imati najmanje 6 karaktera
+        </mat-error>
+      </mat-form-field>
+  
+      <button mat-raised-button color="primary" type="submit" [disabled]="agentForm.invalid">
+        Sačuvaj
+      </button>
+    </form>
+  </mat-card>
+  

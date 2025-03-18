@@ -2,6 +2,12 @@
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
 
   <form [formGroup]="form" (submit)="onSaveProp()" *ngIf="!isLoading">
+    <!-- Naslov -->
+    <mat-form-field appearance="outline">
+      <mat-label>Naslov</mat-label>
+      <input matInput formControlName="naslov" placeholder="Naslov oglasa">
+    </mat-form-field>
+
     <!-- Tip -->
     <mat-form-field appearance="outline">
       <mat-label>Tip</mat-label>
@@ -10,18 +16,6 @@
           {{ tip.name }}
         </mat-option>
       </mat-select>
-    </mat-form-field>
-
-    <!-- Povrsina -->
-    <mat-form-field appearance="outline">
-      <mat-label>Površina</mat-label>
-      <input matInput type="number" formControlName="povrsina" placeholder="Površina (m²)">
-    </mat-form-field>
-
-    <!-- Cena po kvadratu -->
-    <mat-form-field appearance="outline">
-      <mat-label>Cena po kvadratu</mat-label>
-      <input matInput type="number" formControlName="cenaKvadrata" placeholder="Cena po kvadratu (€)">
     </mat-form-field>
 
     <!-- Struktura -->
@@ -34,16 +28,83 @@
       </mat-select>
     </mat-form-field>
 
+    <!-- Grad -->
+    <mat-form-field appearance="outline">
+      <mat-label>Grad</mat-label>
+      <input matInput formControlName="grad" placeholder="Grad">
+    </mat-form-field>
+
+    <!-- Naselje -->
+    <mat-form-field appearance="outline">
+      <mat-label>Naselje</mat-label>
+      <input matInput formControlName="naselje" placeholder="Naselje">
+    </mat-form-field>
+
+    <!-- Adresa -->
+    <mat-form-field appearance="outline">
+      <mat-label>Adresa</mat-label>
+      <input matInput formControlName="adresa" placeholder="Adresa">
+    </mat-form-field>
+
+    <!-- Površina -->
+    <mat-form-field appearance="outline">
+      <mat-label>Površina (m²)</mat-label>
+      <input matInput type="number" formControlName="povrsina" placeholder="Površina">
+    </mat-form-field>
+
+    <!-- Cena -->
+    <mat-form-field appearance="outline">
+      <mat-label>Cena (€)</mat-label>
+      <input matInput type="number" formControlName="cena" placeholder="Cena">
+    </mat-form-field>
+
+    <!-- Spratovi -->
+    <mat-form-field appearance="outline">
+      <mat-label>Spratovi</mat-label>
+      <input matInput type="number" formControlName="spratovi" placeholder="Ukupan broj spratova">
+    </mat-form-field>
+
     <!-- Sprat -->
     <mat-form-field appearance="outline">
       <mat-label>Sprat</mat-label>
       <input matInput type="number" formControlName="sprat" placeholder="Sprat">
     </mat-form-field>
 
-    <!-- Broj spavaćih soba -->
+    <!-- Lift -->
     <mat-form-field appearance="outline">
-      <mat-label>Broj spavaćih soba</mat-label>
-      <input matInput type="number" formControlName="brojSpavacihSoba" placeholder="Broj spavaćih soba">
+      <mat-label>Lift</mat-label>
+      <mat-select formControlName="lift">
+        <mat-option [value]="true">Da</mat-option>
+        <mat-option [value]="false">Ne</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Grejanje -->
+    <mat-form-field appearance="outline">
+      <mat-label>Grejanje</mat-label>
+      <mat-select formControlName="grejanje">
+        <mat-option *ngFor="let option of grejanje" [value]="option.value">
+          {{ option.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Namestenost -->
+    <mat-form-field appearance="outline">
+      <mat-label>Namestenost</mat-label>
+      <mat-select formControlName="namestenost">
+        <mat-option [value]="true">Namešten</mat-option>
+        <mat-option [value]="false">Nenamešten</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- Uknjiženost -->
+    <mat-form-field appearance="outline">
+      <mat-label>Uknjiženost</mat-label>
+      <mat-select formControlName="uknjizenost">
+        <mat-option [value]="true">Uknjižen</mat-option>
+        <mat-option [value]="false">Neuknjižen</mat-option>
+      </mat-select>
     </mat-form-field>
 
     <!-- Image Picker Button -->
@@ -69,11 +130,7 @@
     <!-- Opis -->
     <mat-form-field appearance="outline">
       <mat-label>Opis</mat-label>
-      <textarea 
-        matInput 
-        rows="4" 
-        formControlName="opis"
-        placeholder="Opis"></textarea>
+      <textarea matInput rows="4" formControlName="opis" placeholder="Opis"></textarea>
     </mat-form-field>
 
     <div class="button-container">

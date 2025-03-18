@@ -16,7 +16,7 @@ export class SellPropListComponent {
   sellProps: SellProp[] = []
   isLoading = false
   totalProps = 0
-  propsPerPage = 2
+  propsPerPage = 5
   currentPage = 1
   pageSizeOptions = [1, 2, 5, 10]
   agentIsAuthenticated = false
@@ -24,26 +24,35 @@ export class SellPropListComponent {
   private sellPropSub!: Subscription
   private authStatusSub!: Subscription
 
-  minCenaKvadrata!: number | null;
-  maxCenaKvadrata!: number | null;
+  minCena!: number | null;
+  maxCena!: number | null;
   minPovrsina!: number | null;
   maxPovrsina!: number | null;
   selectedStruktura!: string | null
 
 
   tipovi = [
-    { value: '1', name: 'Stan' },
-    { value: '2', name: 'Kuca' },
-    { value: '3', name: 'Poslovni prostor' }
-  ]
+    { value: 'Stan', name: 'Stan' },
+    { value: 'Kuca', name: 'Kuca' },
+    { value: 'Poslovni prostor', name: 'Poslovni prostor' }
+  ];
 
   strukture = [
-    { value: '1', name: 'Garsonjera' },
-    { value: '2', name: 'Dvosoban' },
-    { value: '3', name: 'Trosoban' },
-    { value: '4', name: 'Cetvorosoban' },
-    { value: '5', name: 'Petosoban' }
-  ]
+    { value: 'Garsonjera', name: 'Garsonjera' },
+    { value: 'Dvosoban', name: 'Dvosoban' },
+    { value: 'Trosoban', name: 'Trosoban' },
+    { value: 'Četvorosoban', name: 'Četvorosoban' },
+    { value: 'Petosoban', name: 'Petosoban' }
+  ];
+
+  grejanja = [
+    { value: 'centralno', name: 'Centralno' },
+    { value: 'etazno', name: 'Etažno' },
+    { value: 'podno', name: 'Podno' },
+    { value: 'ta_pec', name: 'TA peć' },
+    { value: 'struja', name: 'Struja' }
+  ];
+  
 
   constructor(
     public sellPropService: SellPropService, 
@@ -54,21 +63,50 @@ export class SellPropListComponent {
   
   
   ngOnInit(): void {
-    // Subscribe to query params to get initial filter values
-    this.route.queryParams.subscribe((params: Params) => {
-      this.minCenaKvadrata = params['minCena'] || null;
-      this.maxCenaKvadrata = params['maxCena'] || null;
-      this.minPovrsina = params['minPovrsina'] || null;
-      this.maxPovrsina = params['maxPovrsina'] || null;
-      this.selectedStruktura = params['struktura'] || null;
-      this.currentPage = +params['page'] || this.currentPage;
-      this.propsPerPage = +params['pageSize'] || this.propsPerPage;
-      
-      this.getSellProps();
-    });
+
+    this.route.url.subscribe(url => {
+      const isMySellPropsList = url[0] && url[0].path === 'moji-oglasi'
+
+      if (isMySellPropsList) {
+        this.route.queryParams.subscribe((params: Params) => {
+          this.minCena = params['minCena'] || null;
+          this.maxCena = params['maxCena'] || null;
+          this.minPovrsina = params['minPovrsina'] || null;
+          this.maxPovrsina = params['maxPovrsina'] || null;
+          this.selectedStruktura = params['struktura'] || null;
+          this.currentPage = +params['page'] || this.currentPage;
+          this.propsPerPage = +params['pageSize'] || this.propsPerPage;
+          this.getMySellProps()
+
+        })
+
+      } else {
+
+        // Subscribe to query params to get initial filter values
+        this.route.queryParams.subscribe((params: Params) => {
+          this.minCena = params['minCena'] || null;
+          this.maxCena = params['maxCena'] || null;
+          this.minPovrsina = params['minPovrsina'] || null;
+          this.maxPovrsina = params['maxPovrsina'] || null;
+          this.selectedStruktura = params['struktura'] || null;
+          this.currentPage = +params['page'] || this.currentPage;
+          this.propsPerPage = +params['pageSize'] || this.propsPerPage;
+          
+          this.getSellProps();
+        });
+
+      }
+
+
+
+    })
+
+
+    
 
     this.agentId = this.authService.getAgentId();
     this.isLoading = true;
+    
     this.sellPropSub = this.sellPropService.getSellPropUpdateListener().subscribe((sellPropData: {sellProps: SellProp[], sellPropsCount: number}) => {
       this.isLoading = false;
       this.totalProps = sellPropData.sellPropsCount;
@@ -86,20 +124,33 @@ export class SellPropListComponent {
     this.sellPropService.getSellProps(
       this.propsPerPage, 
       this.currentPage, 
-      this.minCenaKvadrata, 
-      this.maxCenaKvadrata,
+      this.minCena, 
+      this.maxCena,
       this.minPovrsina,
       this.maxPovrsina,
       this.selectedStruktura
     );
   }
 
+  getMySellProps() {
+    this.isLoading = true
+    this.sellPropService.getMySellProps(
+      this.propsPerPage, 
+      this.currentPage, 
+      this.minCena, 
+      this.maxCena,
+      this.minPovrsina,
+      this.maxPovrsina,
+      this.selectedStruktura
+    )
+  }
+
   onSearch() {
     this.router.navigate([], {
       relativeTo: this.route,
       queryParams: {
-        minCena: this.minCenaKvadrata,
-        maxCena: this.maxCenaKvadrata,
+        minCena: this.minCena,
+        maxCena: this.maxCena,
         minPovrsina: this.minPovrsina,
         maxPovrsina: this.maxPovrsina,
         struktura: this.selectedStruktura,
@@ -111,8 +162,8 @@ export class SellPropListComponent {
   }
 
   onReset() {
-    this.minCenaKvadrata = null;
-    this.maxCenaKvadrata = null;
+    this.minCena = null;
+    this.maxCena = null;
     this.minPovrsina = null;
     this.maxPovrsina = null;
     this.selectedStruktura = null;
@@ -126,7 +177,7 @@ export class SellPropListComponent {
 
 
   onCardClick(propId: string) {
-    this.router.navigate(['/sell-prop', propId]);
+    this.router.navigate(['/oglasi-za-prodaju', propId]);
   }
 
   onChangePage(pageData: PageEvent) {
@@ -135,8 +186,8 @@ export class SellPropListComponent {
       queryParams: {
         page: pageData.pageIndex + 1,
         pageSize: pageData.pageSize,
-        minCena: this.minCenaKvadrata,
-        maxCena: this.maxCenaKvadrata,
+        minCena: this.minCena,
+        maxCena: this.maxCena,
         minPovrsina: this.minPovrsina,
         maxPovrsina: this.maxPovrsina
       },
@@ -153,6 +204,12 @@ export class SellPropListComponent {
     const struktura = this.strukture.find(s => s.value === value);
     return struktura ? struktura.name : value; // Return the name if found, otherwise return the value
   }
+
+  getGrejanje(value: string): string {
+    const grejanje = this.grejanja.find(g => g.value === value);
+    return grejanje ? grejanje.name : value; // Return the name if found, otherwise 'Nepoznato'
+  }
+  
 
   // onDelete(id: string) {
   //   this.isLoading = true

@@ -19,6 +19,8 @@ import { ErrorInterceptor } from './error-interceptor';
 import { ErrorComponent } from './error/error.component';
 import { SellPropDetailComponent } from './props/sell-props/sell-prop-detail/sell-prop-detail.component';
 import { ImageDialogComponent } from './props/image-dialog/image-dialog.component';
+import { LandingPageComponent } from './landing-page/landing-page.component';
+import { AgentFormComponent } from './agents/agent-form/agent-form.component';
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import { ImageDialogComponent } from './props/image-dialog/image-dialog.componen
     SignupComponent,
     ErrorComponent,
     SellPropDetailComponent,
-    ImageDialogComponent
+    ImageDialogComponent,
+    LandingPageComponent,
+    AgentFormComponent
   ],
   imports: [
     BrowserModule,

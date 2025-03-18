@@ -31,34 +31,66 @@ const storage = multer.diskStorage({
 })
 
 
-// router.get('/', (req, res, next) => {
-//     const pageSize = +req.query.pagesize
-//     const currentPage = +req.query.page
-//     const propQuery = SellProp.find()
-//     let fetchedProps
+// Ruta za dobijanje oglasa prijavljenog agenta
+router.get('/my-sell-props', checkAuth, (req, res, next) => {
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    const minCena = +req.query.minCena;
+    const maxCena = +req.query.maxCena;
+    const minPovrsina = +req.query.minPovrsina;
+    const maxPovrsina = +req.query.maxPovrsina;
+    const struktura = req.query.struktura;
 
-//     if (pageSize && currentPage) {
-//         propQuery.skip(pageSize * (currentPage - 1)).limit(pageSize)
-//     }
+    const agentId = req.agentData.agentId;  // Uzimamo ID prijavljenog agenta iz middleware-a
 
-//     propQuery
-//     .then(documents => {
-//         fetchedProps = documents
-//         return SellProp.countDocuments()
-//     })
-//     .then(count => {
-//         res.status(200).json({
-//             message: 'Properties fetched!',
-//             sellPorps: fetchedProps,
-//             maxProps: count
-//         })
-//     })
-//     .catch(error => {
-//         res.status(500).json({
-//             message: 'Neuspešno dobavljanje oglasa!'
-//         })
-//     })
-// })
+    let query = {agent: agentId};
+
+    // Build the query object based on the filters
+    if (minCena || maxCena) {
+        query.cena = {};
+        if (minCena) query.cena.$gte = minCena;
+        if (maxCena) query.cena.$lte = maxCena;
+    }
+
+    if (minPovrsina || maxPovrsina) {
+        query.povrsina = {};
+        if (minPovrsina) query.povrsina.$gte = minPovrsina;
+        if (maxPovrsina) query.povrsina.$lte = maxPovrsina;
+    }
+
+    if (struktura) {
+        query.struktura = struktura; // Add struktura to the query if provided
+    }
+
+    const propQuery = SellProp.find(query); // Use the query object
+
+    let fetchedProps;
+
+    if (pageSize && currentPage) {
+        propQuery.skip(pageSize * (currentPage - 1)).limit(pageSize);
+    }
+
+    
+
+    // SellProp.find({ agent: agentId })  // Pronalazimo sve oglase kreirane od strane prijavljenog agenta
+    propQuery
+        .then(props => {
+            if (props) {
+                res.status(200).json({
+                    message: 'Oglasi agenta uspešno dobijeni!',
+                    sellProps: props
+                });
+            } else {
+                res.status(404).json({ message: 'Agent nema oglasa!' });
+            }
+        })
+        .catch(error => {
+            res.status(500).json({
+                message: 'Neuspešno dobavljanje oglasa agenta.',
+                error: error
+            });
+        });
+});
 
 router.get('/', (req, res, next) => {
     const pageSize = +req.query.pagesize;
@@ -73,9 +105,9 @@ router.get('/', (req, res, next) => {
 
     // Build the query object based on the filters
     if (minCena || maxCena) {
-        query.cenaKvadrata = {};
-        if (minCena) query.cenaKvadrata.$gte = minCena;
-        if (maxCena) query.cenaKvadrata.$lte = maxCena;
+        query.cena = {};
+        if (minCena) query.cena.$gte = minCena;
+        if (maxCena) query.cena.$lte = maxCena;
     }
 
     if (minPovrsina || maxPovrsina) {
@@ -144,16 +176,25 @@ router.post('/', checkAuth, upload.array('slike', 20), (req, res, next) => {
     const imagePaths = req.files.map(file => url + '/images/' + file.filename);
 
     const sellProp = new SellProp({
+        naslov: req.body.naslov,
         tip: req.body.tip,
-        povrsina: req.body.povrsina,
-        cenaKvadrata: req.body.cenaKvadrata,
         struktura: req.body.struktura,
+        grad: req.body.grad,
+        naselje: req.body.naselje,
+        adresa: req.body.adresa,
+        povrsina: req.body.povrsina,
+        cena: req.body.cena,
+        spratovi: req.body.spratovi,
         sprat: req.body.sprat,
-        brojSpavacihSoba: req.body.brojSpavacihSoba,
+        lift: req.body.lift,
+        grejanje: req.body.grejanje,
+        namestenost: req.body.namestenost,
+        uknjizenost: req.body.uknjizenost,
         slike: imagePaths,
         opis: req.body.opis,
         agent: req.agentData.agentId
-    })
+    });
+
     sellProp.save()
     .then(newProp => {
         res.status(201).json({
@@ -192,15 +233,23 @@ router.put('/:id', checkAuth, upload.array('slike', 20), (req, res, next) => {
   
     // Update object without modifying _id
     const updatedProp = {
-      tip: req.body.tip,
-      povrsina: req.body.povrsina,
-      cenaKvadrata: req.body.cenaKvadrata,
-      struktura: req.body.struktura,
-      sprat: req.body.sprat,
-      brojSpavacihSoba: req.body.brojSpavacihSoba,
-      slike: updatedImages, // Combined image URLs
-      opis: req.body.opis,
-      agent: req.agentData.agentId
+        naslov: req.body.naslov,
+        tip: req.body.tip,
+        struktura: req.body.struktura,
+        grad: req.body.grad,
+        naselje: req.body.naselje,
+        adresa: req.body.adresa,
+        povrsina: req.body.povrsina,
+        cena: req.body.cena,
+        spratovi: req.body.spratovi,
+        sprat: req.body.sprat,
+        lift: req.body.lift,
+        grejanje: req.body.grejanje,
+        namestenost: req.body.namestenost,
+        uknjizenost: req.body.uknjizenost,
+        slike: updatedImages, // Combined image URLs
+        opis: req.body.opis,
+        agent: req.agentData.agentId
     };
   
     // Perform the update

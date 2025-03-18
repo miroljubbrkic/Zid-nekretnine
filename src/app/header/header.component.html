@@ -1,30 +1,43 @@
 <mat-toolbar color="primary">
     <span>
-        <a routerLink="/sell-prop-list">ZID Nekretnine</a>
+      <a routerLink="/" style="text-transform: uppercase;">Lux Kvadrat Nekretnine</a>
     </span>
+    
     <span class="spacer"></span>
+    
     <ul>
-        <li *ngIf="agentIsAuthenticated">
-            <a mat-button routerLink="/sell-prop-list" routerLinkActive='active-link'>Prodaja</a>
-        </li>
-         <li *ngIf="agentIsAuthenticated">
-            <a mat-button routerLink="/create" routerLinkActive='active-link'>Iznajmljivanje</a>
-        </li>
-         <li *ngIf="agentIsAuthenticated">
-            <a mat-button routerLink="/sell-prop-create" routerLinkActive='active-link'>Dodaj za prodaju</a>
-        </li>
-         <li *ngIf="agentIsAuthenticated">
-            <a mat-button routerLink="/create" routerLinkActive='active-link'>Dodaj za iznajmljivanje</a>
-        </li>
-        <li *ngIf="!agentIsAuthenticated">
-            <a mat-button routerLink="/login" routerLinkActive='active-link'>Prijavi se</a>
-        </li>
-        <li *ngIf="!agentIsAuthenticated">
-            <a mat-button routerLink="/signup" routerLinkActive='active-link'>Registruj se</a>
-        </li>
-
-        <li *ngIf="agentIsAuthenticated">
-            <button mat-button (click)="onLogout()">Odjavi se</button>
-        </li>
+      <li>
+        <a mat-button routerLink="/oglasi-za-prodaju" routerLinkActive='active-link'>Prodaja</a>
+      </li>
+      <!-- <li>
+        <a mat-button routerLink="/oglasi-za-prodaju">Iznajmljivanje</a>
+      </li> -->
+      <li *ngIf="agentIsAuthenticated">
+        <a mat-button routerLink="/kreiraj-oglas" routerLinkActive='active-link'>Dodaj za prodaju</a>
+      </li>
+      <!-- <li *ngIf="agentIsAuthenticated">
+        <a mat-button routerLink="/create" routerLinkActive='active-link'>Dodaj za iznajmljivanje</a>
+      </li> -->
+      
+      <!-- If Agent is NOT Authenticated -->
+      <li *ngIf="!agentIsAuthenticated">
+        <a mat-button routerLink="/prijava" routerLinkActive='active-link'>Prijavi se</a>
+      </li>
+      <li *ngIf="!agentIsAuthenticated">
+        <a mat-button routerLink="/registracija" routerLinkActive='active-link'>Registruj se</a>
+      </li>
+  
+      <li *ngIf="agentIsAuthenticated">
+        <button mat-icon-button [matMenuTriggerFor]="profileMenu">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+        <mat-menu #profileMenu="matMenu">
+          <button mat-menu-item routerLink="/moji-oglasi">Moji oglasi</button>
+          <button mat-menu-item routerLink="/uredi-agenta">Moj Profil</button>
+          <button mat-menu-item (click)="onLogout()">Odjavi se</button>
+          <!-- <button mat-menu-item routerLink="/my-rent-props">Iznajmljivanje oglasi</button> -->
+        </mat-menu>
+      </li>
     </ul>
-</mat-toolbar>
+  </mat-toolbar>
+  

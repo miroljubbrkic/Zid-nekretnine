@@ -28,6 +28,7 @@ form {
 mat-form-field {
   width: 100%;
   margin-bottom: 1.5rem; /* Space between fields */
+  margin-top: 1.5rem;
 }
 
 /* Button Styling */

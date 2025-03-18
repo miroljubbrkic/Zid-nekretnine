@@ -2,16 +2,31 @@
   <mat-progress-bar *ngIf="isLoading" mode="indeterminate" color="warn"></mat-progress-bar>
 
   <mat-card-header>
-    <mat-card-title>{{ sellProp.tip }} - {{ (sellProp.povrsina * sellProp.cenaKvadrata) | currency:'EUR' }}</mat-card-title>
-    <mat-card-subtitle>{{ sellProp.struktura }}</mat-card-subtitle>
+    <mat-card-title>{{ sellProp.naslov }} - {{ sellProp.naselje }}, {{ sellProp.grad }}</mat-card-title>
+    <mat-card-subtitle>{{ sellProp.tip }} - {{ sellProp.struktura }}</mat-card-subtitle>
   </mat-card-header>
 
   <mat-card-content>
+    <!-- Basic Property Information -->
     <p><strong>Površina:</strong> {{ sellProp.povrsina }} m²</p>
-    <p><strong>Cena po kvadratu:</strong> {{ sellProp.cenaKvadrata | currency:'EUR' }}</p>
-    <p><strong>Sprat:</strong> {{ sellProp.sprat }}</p>
-    <p><strong>Broj spavaćih soba:</strong> {{ sellProp.brojSpavacihSoba }}</p>
+    <p><strong>Cena:</strong> {{ sellProp.cena | currency:'EUR' }}</p>
+    <p><strong>Cena po m²:</strong> {{ (sellProp.cena / sellProp.povrsina) | currency:'EUR' }}</p>
+    <p><strong>Sprat:</strong> {{ sellProp.sprat }}/{{ sellProp.spratovi }}</p>
+    <p><strong>Grad:</strong> {{ sellProp.grad }}</p>
+    <p><strong>Naselje:</strong> {{ sellProp.naselje }}</p>
+
+    <!-- Address (Visible only when logged in) -->
+    <p *ngIf="agentIsAuthenticated"><strong>Adresa:</strong> {{ sellProp.adresa }}</p>
+    
+    <!-- Additional Information -->
+    <p><strong>Grejanje:</strong> {{ getGrejanje(sellProp.grejanje) }}</p>
+    <p><strong>Lift:</strong> {{ sellProp.lift ? 'Da' : 'Ne' }}</p>
+    <p><strong>Namestenost:</strong> {{ sellProp.namestenost ? 'Namešten' : 'Nenamešten' }}</p>
+    <p><strong>Uknjiženost:</strong> {{ sellProp.uknjizenost ? 'Uknjižen' : 'Neuknjižen' }}</p>
     <p><strong>Opis:</strong> {{ sellProp.opis }}</p>
+
+    <p><strong>Agent:</strong> {{ agentDetails?.ime }} {{ agentDetails?.prezime }}</p>
+    <p><strong>Telefon:</strong> {{ agentDetails?.telefon }}</p>
 
     <!-- Image Gallery -->
     <div *ngIf="sellProp.slike && sellProp.slike.length > 0" class="images-container">
@@ -28,7 +43,7 @@
 
     <!-- Edit and Delete Buttons (Visible only if agent owns the property) -->
     <div *ngIf="agentIsAuthenticated && agentId == sellProp.agent" class="action-button-group">
-      <a mat-raised-button color="primary" [routerLink]="['/sell-prop-edit', sellProp._id]" (click)="$event.stopPropagation()">
+      <a mat-raised-button color="primary" [routerLink]="['/oglasi-za-prodaju/izmena', sellProp._id]" (click)="$event.stopPropagation()">
         <mat-icon>edit</mat-icon> Uredi
       </a>
 

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { SellProp } from '../sell-prop.model';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { SellPropService } from '../sell-prop.service';
@@ -13,29 +13,41 @@ import { Subscription } from 'rxjs';
   templateUrl: './sell-prop-detail.component.html',
   styleUrls: ['./sell-prop-detail.component.css']
 })
-
-export class SellPropDetailComponent implements OnInit {
+export class SellPropDetailComponent implements OnInit, OnDestroy {
   sellProp!: SellProp;
+  agentDetails!: any;
   isLoading = false;
-  agentIsAuthenticated = false
-  agentId!: string | null
-  private authStatusSub!: Subscription
+  agentIsAuthenticated = false;
+  agentId!: string | null;
+  private authStatusSub!: Subscription;
+
+  // Grejanje options map
+  grejanje = [
+    { value: 'centralno', name: 'Centralno' },
+    { value: 'etazno', name: 'Etažno' },
+    { value: 'podno', name: 'Podno' },
+    { value: 'ta_pec', name: 'TA peć' },
+    { value: 'struja', name: 'Struja' }
+  ];
 
   constructor(
-    private route: ActivatedRoute, 
-    private sellPropService: SellPropService, 
+    private route: ActivatedRoute,
+    private sellPropService: SellPropService,
     private location: Location,
     private dialog: MatDialog,
     private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.agentId = this.authService.getAgentId()
-    this.agentIsAuthenticated = this.authService.getIsAuthenticated()
+    // Get agent details and authentication status
+    this.agentId = this.authService.getAgentId();
+    this.agentIsAuthenticated = this.authService.getIsAuthenticated();
     this.authStatusSub = this.authService.getAuthStatusListener().subscribe(isAuthenticated => {
-      this.agentIsAuthenticated = isAuthenticated
-      this.agentId = this.authService.getAgentId()
-    })
+      this.agentIsAuthenticated = isAuthenticated;
+      this.agentId = this.authService.getAgentId();
+    });
+
+    // Fetch property details based on route params
     this.route.paramMap.subscribe((paramMap: ParamMap) => {
       if (paramMap.has('id')) {
         const propId = paramMap.get('id');
@@ -44,18 +56,30 @@ export class SellPropDetailComponent implements OnInit {
           this.sellPropService.getSellProp(propId).subscribe(propData => {
             this.isLoading = false;
             this.sellProp = propData.sellProp;
+
+            if (this.sellProp.agent) {
+              this.fetchAgentDetails(this.sellProp.agent)
+            }
           });
         }
       }
     });
-    console.log(this.agentIsAuthenticated);
   }
 
+  fetchAgentDetails(agentId: string): void {
+    this.authService.getAgentById(agentId).subscribe(response => {
+      this.agentDetails = response.agent;
+    }, error => {
+      console.error('Failed to fetch agent details', error);
+    });
+  }
+
+  // Go back to the previous page
   onBack(): void {
     this.location.back();
   }
 
-
+  // Open image dialog to view property images
   openImageDialog(imgSrc: string): void {
     const initialIndex = this.sellProp.slike.indexOf(imgSrc); // Get the index of the clicked image
     this.dialog.open(ImageDialogComponent, {
@@ -63,33 +87,37 @@ export class SellPropDetailComponent implements OnInit {
         images: this.sellProp.slike, // Pass all images
         initialIndex: initialIndex   // Set the initial index
       },
-      width: '600px', // Set a fixed width
-      height: '600px', // Set a fixed height
-      maxWidth: '90vw', // Optional: to handle small screens
-      maxHeight: '90vh', // Optional: to handle small screens
-      panelClass: 'custom-dialog-container', // Optional: Custom styles for the dialog
-      disableClose: false // Prevents closing the dialog by clicking outside
+      width: '600px',
+      height: '600px',
+      maxWidth: '90vw',
+      maxHeight: '90vh',
+      panelClass: 'custom-dialog-container',
+      disableClose: false
     });
   }
 
-  onDelete(id: string) {
-    this.isLoading = true
+  // Delete property
+  onDelete(id: string): void {
+    this.isLoading = true;
     this.sellPropService.deleteSellProp(id).subscribe(() => {
       this.isLoading = false;
       alert('Property deleted successfully!');
-      // Navigate back to the list after successful deletion
-      this.location.back(); 
-
+      this.location.back(); // Navigate back to the list after deletion
     }, error => {
-      this.isLoading = false
+      this.isLoading = false;
       console.error('Error deleting property:', error);
       alert('Failed to delete the property.');
-    })
+    });
   }
-  
 
+  // Map grejanje value to its name
+  getGrejanje(value: string): string {
+    const grejanje = this.grejanje.find(g => g.value === value);
+    return grejanje ? grejanje.name : 'Nepoznato';
+  }
 
-
-
-
+  ngOnDestroy(): void {
+    // Unsubscribe to avoid memory leaks
+    this.authStatusSub.unsubscribe();
+  }
 }

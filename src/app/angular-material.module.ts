@@ -12,7 +12,9 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import {MatDialogModule} from '@angular/material/dialog';
 import {MatSelectModule} from "@angular/material/select";
 import {MatIconModule} from '@angular/material/icon';
-import { MatGridListModule } from '@angular/material/grid-list';
+import {MatGridListModule} from '@angular/material/grid-list';
+import {MatMenuModule} from '@angular/material/menu';
+import {MatStepperModule} from '@angular/material/stepper';
 
 
 
@@ -32,7 +34,9 @@ import { MatGridListModule } from '@angular/material/grid-list';
     MatDialogModule,
     MatSelectModule,
     MatIconModule,
-    MatGridListModule
+    MatGridListModule,
+    MatMenuModule,
+    MatStepperModule
   ]
 })
 export class AngularMaterialModule { }
